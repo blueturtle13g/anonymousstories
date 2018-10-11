@@ -1,0 +1,441 @@
+<script>
+    jQuery(document).ready(function($){
+
+        $(".myCard-header").click(function () {
+            $(this).next().toggle("slide", { direction: "up" }, 500);
+        });
+
+        $("#shP").click(function() {
+            let passes = $(".passes");
+            if (passes.attr('type') === "password") {
+                passes.attr('type', 'text');
+            } else {
+                passes.attr('type', 'password');
+            }
+        });
+        // for alerts
+        function errAlert(msg) {
+            let errBox = $("#errBox");
+            errBox.find(".message").html(msg);
+            errBox.find(".no").unbind().click(function () {
+                $("#confirmBox").hide();
+                errBox.hide();
+            });
+            errBox.show("slide", {direction: "up"}, 500);
+        }
+        // for commenting ajaxes
+        $("#sendCom").click(function (e) {
+            e.preventDefault();
+            let storyId = $("#sendCom").data("storyid");
+            $.ajax({
+                url: "/story/"+storyId,
+                type: 'post',
+                dataType: 'html',
+                data: {
+                    submit: "com",
+                    text: $("#comText").val()
+                },
+                success: function (data) {
+                    if (data === "done") {
+                        window.location.reload();
+                    } else {
+                        errAlert(data);
+                    }
+                }
+            });
+        });
+        $("#sendRate").click(function (e) {
+            e.preventDefault();
+            let storyId = $("#sendRate").data("storyid");
+            $.ajax({
+                url: "/story/"+storyId,
+                type: 'post',
+                dataType: 'html',
+                data: {
+                    submit: "rate",
+                    RatePrem: $("#premise-selected_rating").val(),
+                    RatePres: $("#presentation-selected_rating").val(),
+                    RateStr: $("#structure-selected_rating").val(),
+                    RateChar: $("#characters-selected_rating").val(),
+                    RateTheme: $("#theme-selected_rating").val(),
+                    RateStyle: $("#style-selected_rating").val(),
+                    RateCom: $("#commercial-selected_rating").val()
+                },
+                success: function (data) {
+                    if (data === "done") {
+                        window.location.reload();
+                    } else {
+                        errAlert(data);
+                    }
+                }
+            });
+        });
+        function indexInClass(node) {
+            var collection = document.getElementsByClassName(node.className);
+            for (var i = 0; i < collection.length; i++) {
+                if (collection[i] === node)
+                    return i;
+            }
+            return -1;
+        }
+        OpenIndex();
+        function OpenIndex(){
+            var index = window.sessionStorage.getItem("openRes");
+            $(".ResField").eq(index).show();
+        }
+
+        $(".exCom").click(function() {
+            window.sessionStorage.setItem("openRes", indexInClass(this));
+            $(this).parent().next().toggle("slide", { direction: "up" }, 500);
+        });
+
+        $(".exEdit").click(function(e) {
+            e.preventDefault();
+            var textBox = $("#textBox");
+            var comId = $(this).data("comid");
+            textBox.find(".message").html("<h5>Edit Your Comment</h5>");
+            textBox.find("textarea").val($(this).data("comtext"));
+            textBox.find(".send").unbind().click(function () {
+                $.ajax({
+                    url: "/story/"+$(this).data("storyid"),
+                    type: 'post',
+                    dataType: 'html',
+                    data: {
+                        submit: "EditCom",
+                        text: textBox.find("textarea").val(),
+                        comId: comId,
+                    },
+                    success: function (data) {
+                        if (data === "done") {
+                            window.location.reload();
+                        } else {
+                            errAlert(data);
+                        }
+                    }
+                });
+            });
+            textBox.find(".cancel").unbind().click(function () {
+                textBox.hide();
+                $("#errBox").hide();
+            });
+            textBox.show("slide", {direction: "up"}, 500);
+            textBox.find("textarea").focus();
+        });
+
+        $(".sendResCom").click(function (e) {
+            e.preventDefault();
+            let comId = $(this).data("comid");
+            let storyId = $(this).data("storyid");
+            let text = $(this).parent().parent().children("textarea").val();
+            $.ajax({
+                url: "/story/"+storyId,
+                type: 'post',
+                dataType: 'html',
+                data: {
+                    submit: "resCom",
+                    text: text,
+                    comId: comId,
+                },
+                success: function (data) {
+                    if (data === "done") {
+                        window.location.reload();
+                    } else {
+                        errAlert(data);
+                    }
+                }
+            });
+        });
+        // end of commenting ajaxes
+        $("#outSure").click(function (e) {
+            e.preventDefault();
+            let confirmBox = $("#confirmBox");
+            confirmBox.find(".message").html("<h5>Are you sure?</h5>");
+            confirmBox.find(".yes").unbind().click(function () {
+                $.ajax({
+                    url: '/out',
+                    type: 'get',
+                    dataType: 'html',
+                    success: function (data) {
+                        if (data === "done") {
+                            window.location.reload()
+                        } else {
+                            errAlert("<h5>Your operation doesn't get completed</h5>")
+                        }
+                    }
+                });
+            });
+            confirmBox.find(".no").unbind().click(function () {
+                confirmBox.hide();
+            });
+            confirmBox.show("slide", {direction: "up"}, 500);
+        });
+        $("#dpSure").click(function (e) {
+            e.preventDefault();
+            let confirmBox = $("#confirmBox");
+            confirmBox.find(".message").html("<h5> Are you sure you want to delete your account?</h5><p>It can't be retrieved later</p>");
+            confirmBox.find(".yes").unbind().click(function () {
+                $.ajax({
+                    url: "/profile/{{.Writer.Id}}/edit",
+                    type: 'post',
+                    dataType: 'html',
+                    data : { submit : "Delete",
+                    },
+                    success : function(data) {
+                        if (data === "done"){
+                            window.location.reload();
+                            window.location = "/";
+                        } else {
+                            errAlert("<h5>Your operation doesn't be completed</h5>")
+                        }
+                    }
+                });
+            });
+            confirmBox.find(".no").unbind().click(function () {
+                confirmBox.hide();
+            });
+            confirmBox.show("slide", {direction: "up"}, 500);
+        });
+        $("#dsSure").click(function (e) {
+            e.preventDefault();
+            let confirmBox = $("#confirmBox");
+            let storyid = $("#dsSure").data("storyid");
+            console.log(storyid);
+            confirmBox.find(".message").html("<h5> Are you sure you want to delete this story?</h5><p>It can't be retrieved later</p>");
+            confirmBox.find(".yes").unbind().click(function () {
+                $.ajax({
+                    url: "/story/"+storyid+"/edit",
+                    type: 'post',
+                    dataType: 'html',
+                    data : { submit : "Delete",
+                    },
+                    success : function(data) {
+                        if (data === "done"){
+                            window.location.reload();
+                            window.location = "/";
+                        } else {
+                            errAlert("</h5>Your operation doesn't be completed</h5>")
+                        }
+                    }
+                });
+            });
+            confirmBox.find(".no").unbind().click(function () {
+                confirmBox.hide();
+            });
+            confirmBox.show("slide", {direction: "up"}, 500);
+        });
+        $(".drSure").click(function (e) {
+            e.preventDefault();
+            let confirmBox = $("#confirmBox");
+            let comId = $(this).data("comid");
+            let storyId = $(this).data("storyid");
+            confirmBox.find(".message").html("<h5>Are you sure?</h5>");
+            confirmBox.find(".yes").unbind().click(function () {
+                $.ajax({
+                    url: "/story/"+storyId,
+                    type: 'post',
+                    dataType: 'html',
+                    data : { submit : "DeleteCom",
+                        comId : comId
+                    },
+                    success : function(data) {
+                        if (data === "done"){
+                            window.location.reload();
+                        } else {
+                            errAlert("</h5>Your operation doesn't be completed</h5>")
+                        }
+                    }
+                });
+            });
+            confirmBox.find(".no").unbind().click(function () {
+                confirmBox.hide();
+            });
+            confirmBox.show("slide", {direction: "up"}, 500);
+        });
+        // end of alerts
+
+        //validation form
+        $('input:submit').on('click', function(e) {
+            if ($(".inputErr").is(":visible")){
+                e.preventDefault();
+                $('#submitWarn').show();
+            }
+        });
+        $('#username').on('blur', function(){
+            let username = $('#username').val();
+            $('#submitWarn').hide();
+            if (username === "") {
+                $('#usernameWarn').hide();
+                $("#usernameIcon").css("backgroundColor","whitesmoke");
+                return;
+            }else if (username.length < 3){
+                $('#usernameWarn').show();
+                $("#usernameWarn").addClass("inputErr").removeClass("inputOk");
+                $('#usernameWarn').html("<strong>At Least 3 Characters</strong>");
+                $("#usernameIcon").css("backgroundColor","#fd4d48d6");
+                return;
+            }
+            $.ajax({
+                url: '/register',
+                type: 'post',
+                dataType: 'html',
+                data : { submit: "CheckName",
+                    writerId: $("#username").data("writerid"),
+                    username: $("#username").val(),
+                },
+                success : function(data) {
+                    if (data === "Invalid"){
+                        $("#usernameWarn").addClass("inputErr").removeClass('inputOk');
+                        $("#usernameIcon").css("backgroundColor", "#fd4d48d6");
+                        $("#usernameWarn").html("<strong title='It cannot start with numbers and should be in english.'>Invalid Name</strong>");
+                        $("#usernameWarn").show();
+                    }else if (data === "Taken") {
+                        $("#usernameWarn").addClass("inputErr").removeClass('inputOk');
+                        $("#usernameIcon").css("backgroundColor", "#fd4d48d6");
+                        $("#usernameWarn").html("<strong title='some user has already chosen this name, so it is not available to you.'>Already Taken</strong>");
+                        $("#usernameWarn").show();
+                    } else if (data === "Available") {
+                        $("#usernameWarn").addClass("inputOk").removeClass("inputErr");
+                        $("#usernameIcon").css("backgroundColor", "rgba(64, 139, 83, 0.84)");
+                        $("#usernameWarn").html("<strong title='No user has chosen this name, so it is available to you.'>Available</strong>");
+                        $("#usernameWarn").show();
+                    } else {
+                        $("#usernameWarn").hide();
+                    }
+                }
+            });
+        });
+        $('#email').on('blur', function(){
+            $('#submitWarn').hide();
+            var email = $("#email").val();
+            if (email === ""){
+                $('#emailWarn').hide();
+                $("#emailIcon").css("backgroundColor", "whitesmoke");
+            }else if (validateEmail(email)) {
+                $('#emailWarn').hide();
+                $("#emailIcon").css("backgroundColor", "rgba(64, 139, 83, 0.84)");
+            }else{
+                $('#emailWarn').show();
+                $("#emailIcon").css("backgroundColor","#fd4d48d6");
+            }
+        });
+        $('#password').on('blur', function(){
+            $('#submitWarn').hide();
+            let password = $('#password').val();
+            if (password === ""){
+                $('#passWarn').hide();
+                $("#passIcon").css("backgroundColor","whitesmoke");
+            }else if (password.length < 8) {
+                $('#passWarn').show();
+                $("#passIcon").css("backgroundColor","#fd4d48d6");
+            }else{
+                $('#passWarn').hide();
+                $("#passIcon").css("backgroundColor", "rgba(64, 139, 83, 0.84)");
+            }
+        });
+        function validateEmail(email) {
+            var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+            return re.test(email);
+        }
+        $('#confirm').on('blur', function(){
+            $('#submitWarn').hide();
+            let password = $('#password').val();
+            let confirm = $('#confirm').val();
+            if (confirm === "") {
+                $('#confWarn').hide();
+                $("#confIcon").css("backgroundColor", "whitesmoke");
+            }else if (confirm !== password){
+                $('#confWarn').show();
+                $("#confIcon").css("backgroundColor","#fd4d48d6");
+            }else{
+                $('#confWarn').hide();
+                $("#confIcon").css("backgroundColor", "rgba(64, 139, 83, 0.84)");
+            }
+        });
+        // end of validation form
+
+        // for searchbar appearing
+        $( "#searchIcon" ).click(function() {
+            if($('#appear:visible').length)
+                $('#appear').hide("slide", { direction: "left" }, 1000);
+            else
+                $('#appear').show("slide", { direction: "right" }, 500);
+        });
+        // end of searchbar
+
+        // rating system
+        $(".btnrating").on('click',(function(e) {
+
+            var previous_value = $("#selected_rating").val();
+
+            var selected_value = $(this).attr("data-attr");
+            $("#selected_rating").val(selected_value);
+
+            $(".selected-rating").empty();
+            $(".selected-rating").html(selected_value);
+
+            for (i = 1; i <= selected_value; ++i) {
+                $("#rating-star-"+i).toggleClass('btn-warning');
+                $("#rating-star-"+i).toggleClass('btn-default');
+            }
+
+            for (ix = 1; ix <= previous_value; ++ix) {
+                $("#rating-star-"+ix).toggleClass('btn-warning');
+                $("#rating-star-"+ix).toggleClass('btn-default');
+            }
+
+        }));
+
+        // for image upload
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+
+                var reader = new FileReader();
+
+                reader.onload = function(e) {
+                    $('.image-upload-wrap').hide();
+
+                    $('.file-upload-image').attr('src', e.target.result);
+                    $('.file-upload-content').show();
+
+                    // $('.image-title').html(input.files[0].name);
+                };
+
+                reader.readAsDataURL(input.files[0]);
+
+            } else {
+                removeUpload();
+            }
+        }
+        function removeUpload() {
+            $('.file-upload-input').replaceWith($('.file-upload-input').clone());
+            $('.file-upload-content').hide();
+            $('.image-upload-wrap').show();
+        }
+        $('.image-upload-wrap').bind('dragover', function () {
+            $('.image-upload-wrap').addClass('image-dropping');
+        });
+        $('.image-upload-wrap').bind('dragleave', function () {
+            $('.image-upload-wrap').removeClass('image-dropping');
+        });
+        // end of image upload
+    });
+</script>
+<div id="confirmBox" class="alertBox" >
+    <div class ="message" ></div>
+    <button class ="yes" >Yes</button>
+    <button class ="no" >No</button>
+</div>
+<div id="textBox" class="alertBox" >
+    <div class ="message"></div>
+    <textarea class="rounded" cols="30" rows="10"></textarea>
+    <button class ="send no" >Send</button>
+    <button class ="cancel yes" >Cancel</button>
+</div>
+<div id="errBox" class="alertBox" >
+    <div class ="message" ></div>
+    <button class ="no" >OK</button>
+</div>
+<script src="/static/js/main.js"></script>
+
+</body>
+</html>

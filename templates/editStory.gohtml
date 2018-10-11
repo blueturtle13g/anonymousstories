@@ -1,0 +1,97 @@
+{{ template "header.gohtml" .}}
+  {{ if .Err }}
+  <div class="center alert alert-danger" role="alert">
+      <h6>{{ .Err }}</h6>
+  </div>
+  {{ else if .Errs }}
+  <div class="center alert alert-danger" role="alert">
+    {{ range .Errs }}
+    <ul>
+      <li><h6>{{ . }}</h6></li>
+    </ul>
+    {{ end }}
+  </div>
+{{ end }}
+<br>
+<div id="tell" class="jumbotron">
+<form method="post" enctype="multipart/form-data">
+    <div class="file-upload">
+        <button class="file-upload-btn" type="button" onclick="$('.file-upload-input').trigger( 'click' )">Change Image</button>
+
+        <div class="image-upload-wrap">
+            <input class="file-upload-input" name="pic" type='file' onchange="readURL(this);" accept="image/*" />
+            <div class="drag-text">
+                <h3>Drag and drop a file or select add Image</h3>
+            </div>
+        </div>
+        <div class="file-upload-content">
+            <img class="file-upload-image rotate90" src="#" alt="your image" />
+            <div class="image-title-wrap">
+                <button type="button" onclick="removeUpload()" class="probut btn-danger">Remove<span class="image-title"></span></button>
+            </div>
+        </div>
+    </div>
+
+    <br><br><br>
+
+  <h3 id="tellHeader" class="center">Tell Your Very Own Story</h3><hr>
+  <div class="row">
+    <div class="col-md-4">
+      <div class="form-group">
+        <label for="title" class="control-label">Title</label>
+          <div class="input-group">
+            <input type="text" class="form-control" name="title" id="title" {{if .Story.Title }} value="{{ .Story.Title }}" {{end}} placeholder="Title Of Your Story" required/>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="form-group">
+        <label for="cat" class="control-label">Current Categories</label>
+          <div class="input-group">
+            <select id="cat" class="form-control" name="selectCat">
+              <option value=""></option>
+              {{ $selectedCat := .Cat.Name }}
+              {{ range .Cats }}
+                <option value="{{ .Name }}"
+                {{ if $selectedCat }}
+                  {{ if eq .Name $selectedCat }}
+                    selected
+                  {{ end }}
+                {{ end }}>{{ .Name }}</option>
+              {{ end }}
+            </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="form-group">
+        <label for="cat" class="control-label">Or Make Your Own Category</label>
+          <div class="input-group">
+            <input type="text" class="form-control" name="cat" id="cat" value="" placeholder="Name Of The Category"/>
+        </div>
+      </div>
+    </div>
+
+  </div> <!-- row -->
+
+  <div class="row">
+
+    <div class="col-md-12">
+
+      <div class="form-group">
+          <label for="body">Begin</label>
+          <textarea class="form-control" id="body" name="body" rows="8" placeholder="You Can Make Tags with Putting A '#' Sign Before Your Word. So It Would Be Searchable And Easier To Be Find." required> {{ .Story.Body }}</textarea>
+      </div>
+    </div>
+
+  </div>
+
+    <div class="login-register">
+  	  <input type="submit" class="btn btn-primary" value="Share It">
+      <button id="dsSure" data-storyid="{{ .Story.Id }}" class="btn btn-danger">Delete</button>
+    </div>
+</form>
+</div>
+{{ template "footer.gohtml"}}

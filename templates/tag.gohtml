@@ -1,0 +1,28 @@
+{{ template "header.gohtml" .}}
+<br>
+<h3 class="center backCol">#{{.Tag.Name}} Is used in these stories.</h3>
+
+{{ if .Stories }}
+<div class="container">
+  {{ range .Stories }}
+    <div class="card bg-light mb-3" style="max-width: 100rem;">
+      <div class="card-header"><a href="/story/{{.Id}}">{{ .Title}}</a></div>
+      <div class="card-body">
+        <p class="storyBody card-text">{{ .Body}}</p>
+        <p class="card-text">
+        <small class="text-muted">Category: {{ .Cat }} | By: {{ .By }} | Rate: {{ if eq .Rate 0.0 }} Not Rated Yet.
+                                                                  {{ else }}
+                                                                    {{ .Rate }}/5 Out Of {{ .RateCount }} Vote.
+                                                                  {{ end }}
+                                                            | Created On: {{ .CreatedOn }}
+
+                                                          </small>
+      </p>
+      </div>
+    </div>
+  {{end}} <!-- range story -->
+
+</div>
+ {{end}} <!-- if story -->
+
+{{ template "footer.gohtml" .}}

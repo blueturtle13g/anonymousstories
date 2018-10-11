@@ -1,0 +1,72 @@
+{{ template "header.gohtml" .}}
+<div class="container">
+{{ if .Cong }}
+<div class="center alert alert-success" role="alert">
+  <h6>{{ .Cong }}</h6>
+</div>
+{{ end }}
+    <br>
+    <div class="center jumbotron">
+        {{ $writerId := .Writer.Id }}
+        {{ $writerPic := .Writer.Pic }}
+        {{ if .Writer.Pic }}
+        <img class="propic" src="/static/pic/pros/{{$writerId}}/{{$writerPic}}">
+        {{ end }}
+            <br><br>
+            <div class="proinfo">
+        <h6><strong>Your SurName:</strong> {{ .Writer.Name }}</h6>
+        <h6><strong>Your Email:</strong> {{ .Writer.Email }}</h6>
+        <h6><strong>Your Quote:</strong> {{ .Writer.Quote }}</h6>
+        <h6><strong>Your Rate:</strong> {{ .Writer.Rate }}<small>/5 Out Of {{ .Writer.RateCount}} Votes.</small></h6>
+        <h6> <strong>Share Your Email:</strong> {{ if eq .Writer.Permission true }} Yes {{ else }} No {{ end }}</h6>
+        <a class="btn btn-info" href="/profile/{{.Writer.Id}}/edit">Edit Your Information</a>
+            </div>
+    </div>
+</div>
+<br>
+
+<div class="container">
+    <div class="card bg-light mb-3" style="max-width: 100rem;">
+        <div class="card-header myCard-header">Your Top Ten Stories</div>
+        <div class="card-body myCard-body">
+            <div class="card-text">
+            <ol>
+            {{ range .TopTenStories }}
+                <li><a href="/story/{{.Id}}">{{.Title}}</a> with {{ .Rate }}<small>/5 Out Of {{ .RateCount }} Votes.</small></li>
+            {{end}} <!-- range TopStories -->
+            </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="card bg-light mb-3" style="max-width: 100rem;">
+        <div class="card-header myCard-header">All Stories</div>
+        <div class="card-body myCard-body">
+            <div class="card-text">
+            <ol>
+            {{ range .Stories }}
+                <li><a href="/story/{{.Id}}">{{.Title}}</a> with {{ .Rate }}<small>/5 Out Of {{ .RateCount }} Vote.</small></li>
+            {{end}} <!-- range RecentStories -->
+            </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="card bg-light mb-3" style="max-width: 100rem;">
+        <div class="card-header myCard-header">Your Categories</div>
+        <div class="card-body myCard-body">
+            <div class="card-text">
+                <ol>
+                {{ range .Cats }}
+                    <li><a href="/story/{{.Id}}">{{.Name}}</a> with {{ .Rate }}<small>/5 Out Of {{ .RateCount }} Votes.</small></li>
+                {{end}} <!-- range TopStories -->
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+{{ template "footer.gohtml" .}}

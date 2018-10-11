@@ -1,0 +1,56 @@
+{{ template "header.gohtml" .}}
+
+<div class="container">
+{{ if .Err }}
+  <div class="center alert alert-danger" role="alert">
+    <h6>{{ .Err }}</h6>
+  {{ if eq .Err "your Password is wrong." }}
+    <h6>have you forgotten your password?<a href="/forgetPass">Get It By Email</a></h6>
+  </div>
+  {{else}}
+  </div>
+  {{ end}}
+{{end}}
+
+  <div class="row main">
+    <div class="main-login main-center">
+      <form class="form-horizontal" method="post" action="/in">
+
+        <div class="form-group">
+          <label for="name" class="cols-sm-2 control-label">Username | Email</label>
+          <div class="cols-sm-10">
+            <div class="input-group">
+              <span class="input-group-addon"><i class="fa fa-users fa" aria-hidden="true"></i></span>
+              <input type="text" class="form-control" name="uORe" id="name" {{if .UORE }} value="{{.UORE}}" {{end}} placeholder="Enter your Username" required/>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="password" class="cols-sm-2 control-label">Password</label>
+          <div class="cols-sm-10">
+            <div class="input-group">
+              <span class="input-group-addon"><i class="fa fa-lock fa-lg" aria-hidden="true"></i></span>
+              <input type="password" maxlength="50" class="passes form-control" name="password" id="password"  placeholder="Enter your Password" required/>
+            </div>
+          </div>
+        </div>
+
+        <div id="showPass" class="form-group">
+            <label for="shP" class="cols-sm-2 control-label">Show Password</label>
+            <input id="shP" type="checkbox">
+        </div>
+
+        <div class="login-register">
+          <input class="btn btn-primary" type="submit" value="Login">
+             </div>
+             <br>
+        <div class="login-register">
+              <h6>Or <a href="/register">Register</a> </h6>
+             </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+{{ template "footer.gohtml"}}

@@ -1,0 +1,85 @@
+{{ template "header.gohtml" .}}
+
+  <div class="container">
+    {{ if .Cong }}
+    <div class="center alert alert-success" role="alert">
+      <h6>{{ .Cong }}</h6>
+    </div>
+    {{ else if .Errs }}
+    <div class="center alert alert-danger" role="alert">
+      {{ range .Errs }}
+      <ul>
+        <li><h6>{{ . }}</h6></li>
+      </ul>
+      {{ end }}
+    </div>
+    {{ else if .Err }}
+        <div class="center alert alert-danger" role="alert">
+                <h6>{{ .Err }}</h6>
+        </div>
+    {{ end }}
+
+    <div class="limit">
+    <div class="row main">
+      <div class="main-login main-center">
+        <form class="form-horizontal" method="post">
+          {{ if .WriterName }}
+          <h4>{{ .WriterName -}}</h4>
+          {{else}}
+          <div class="form-group">
+            <label for="name" class="cols-sm-2 control-label">Name</label>
+            <div class="cols-sm-10">
+              <div class="input-group">
+                <span id="nameIcon" class="input-group-addon"><i class="fa fa-users fa" aria-hidden="true"></i></span>
+                <input id="name" type="text" class="form-control" name="name" {{if .Name }} value="{{.Name}}" {{end}} placeholder="Enter your Name" required/>
+              </div>
+            </div>
+              <div class="col-12 warns">
+                  <label class="inputErr cols-sm-2 control-label" id="nameWarn" style="display: none;"></label>
+              </div>
+          </div>
+
+          <div class="form-group">
+            <label for="email" class="cols-sm-2 control-label">Email</label>
+            <div class="cols-sm-10">
+              <div class="input-group">
+                <span class="input-group-addon"><i class="fa fa-envelope fa" aria-hidden="true"></i></span>
+                <input type="email" class="form-control" name="email" id="email" {{ if .Email }} value="{{ .Email }}" {{end}}  placeholder="Enter your Email" required/>
+              </div>
+            </div>
+          </div>
+          {{ end }}
+              <div class="form-group">
+                  <label for="message" class="cols-sm-2 control-label">Leave us a message.</label>
+                  <div class="cols-sm-10">
+                      <div class="input-group">
+                          <textarea name="text" class="form-control" rows="8" cols="80" placeholder="Your Message..." required> {{if .Text }} {{.Text}} {{end}}</textarea>
+                      </div>
+                  </div>
+              </div>
+          <div class="login-register">
+            <input class="btn btn-primary" type="submit" value="Send">
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+    $('#name').on('blur', function() {
+        let name = $('#name').val();
+        $('#submitWarn').hide();
+        if (name === "") {
+            $('#nameWarn').hide();
+            $("#nameIcon").css("backgroundColor", "whitesmoke");
+            return;
+        }
+        if (name.length < 3) {
+            $('#nameWarn').show();
+            $("#nameWarn").addClass("inputErr").removeClass("inputOk");
+            $('#nameWarn').html("<strong>At Least 3 Characters</strong>");
+            $("#nameIcon").css("backgroundColor", "#fd4d48d6");
+        }
+    });
+</script>
+{{ template "footer.gohtml"}}

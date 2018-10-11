@@ -1,0 +1,89 @@
+{{ template "header.gohtml" .}}
+
+<div class="container">
+    <div class="col-12 warns">
+        <label id="submitWarn" style="display: none;" class="inputErr cols-sm-2 control-label"><strong>Please Fix Errors And Try Again</strong></label>
+    </div>
+                {{ if .Errs }}
+                  <div class="center alert alert-danger" role="alert">
+                    {{ range .Errs }}
+                    <ul>
+                      <li><h6>{{ . }}</h6></li>
+                    </ul>
+                    {{ end }}
+                  </div>
+                {{ end }}
+<div class="limit">
+
+  <div class="row main">
+    <div class="main-login main-center">
+      <form class="form-horizontal" method="post">
+        <div class="form-group">
+          <label for="username" class="cols-sm-2 control-label">Username</label>
+            <div class="cols-sm-10">
+                <div class="input-group">
+                    <span id="usernameIcon" class="input-group-addon"><i class="fa fa-users fa" aria-hidden="true"></i></span>
+                    <input type="text" data-WriterId="0" class="form-control" maxlength="20" name="username" id="username" {{ if .UserName }} value="{{.UserName }}" {{end}}  placeholder="Enter your Username" required/>
+                </div>
+            </div>
+            <div class="col-12 warns">
+                <label class="inputErr cols-sm-2 control-label" id="usernameWarn" style="display: none;"></label>
+            </div>
+        </div>
+
+        <div class="form-group">
+          <label for="email" class="cols-sm-2 control-label">Your Email</label>
+          <div class="cols-sm-12">
+            <div class="input-group">
+              <span id="emailIcon" class="input-group-addon"><i class="fa fa-envelope fa" aria-hidden="true"></i></span>
+              <input type="email" class="form-control" name="email" id="email" {{ if .Email }} value="{{ .Email }}" {{end}}  placeholder="Enter your Email" required/>
+            </div>
+          </div>
+            <div class="col-12 warns">
+                <label id="emailWarn" style="display: none;" class="inputErr cols-sm-2 control-label"><strong>Not Valid</strong></label>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="password" class="cols-sm-2 control-label">Password</label>
+            <div class="cols-sm-10">
+                <div class="input-group">
+                    <span id="passIcon" class="input-group-addon"><i class="fa fa-lock fa-lg" aria-hidden="true"></i></span>
+                    <input type="password" maxlength="50" class="passes form-control" name="password" id="password"  placeholder="Enter your Password" required/>
+                </div>
+            </div>
+            <div class="col-12 warns">
+                <label for="password" id="passWarn" style="display: none;" class="inputErr cols-sm-2 control-label"><strong>At Least 8 Characters</strong></label>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="confirm" class="cols-sm-2 control-label">Confirm Password</label>
+            <div class="cols-sm-10">
+                <div class="input-group">
+                    <span id="confIcon" class="input-group-addon"><i class="fa fa-lock fa-lg" aria-hidden="true"></i></span>
+                    <input type="password" maxlength="50" class="passes form-control" name="confirm" id="confirm"  placeholder="Confirm your Password" required/>
+                </div>
+            </div>
+            <div class="col-12 warns">
+                <label id="confWarn" style="display: none;" class="inputErr cols-sm-2 control-label"><strong>Doesn't Match</strong></label>
+            </div>
+        </div>
+
+        <div id="showPass" class="form-group">
+            <label for="shP" class="cols-sm-2 control-label">Show Password</label>
+            <input id="shP" type="checkbox">
+        </div>
+
+        <div class="form-group">
+          <input type="submit" id="regSubmit" class="btn btn-primary btn-md btn-block login-button" value="Register"/>
+        </div>
+        <div class="login-register">
+              <h6>Or <a href="/in">Log In</a></h6>
+             </div>
+      </form>
+    </div>
+  </div>
+</div>
+</div>
+{{ template "footer.gohtml"}}

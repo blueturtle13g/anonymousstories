@@ -1,0 +1,532 @@
+{{ template "header.gohtml" .}}
+<br>
+{{ if .Err }}
+  <div class="center alert alert-danger" role="alert">
+    <h6>{{ .Err }}</h6>
+  </div>
+{{else if .Cong }}
+  <div class="center alert alert-success" role="alert">
+      <h6>{{ .Cong }}</h6>
+  </div>
+{{ end }}
+<br>
+
+<div class="container jumbotron">
+  <div class="center">
+      <a href="/writer/{{.StoryWriter.Id}}">{{if ne .StoryWriter.Name .StoryWriter.Email }}{{if not .StoryWriter.Pic}}{{.StoryWriter.Name}}{{else}}<img class="smpro" id="topStoryPic" src="/static/pic/pros/{{.StoryWriter.Id}}/{{.StoryWriter.Pic}}">{{end}}{{end}}</a>
+  </div>
+  <h3 class="center">{{ .Story.Title }}</h3>
+  <hr>
+  {{ if .Story.Pic}}
+      <img class="storyPic rounded" src="/static/pic/stories/{{.Story.Id}}/{{.Story.Pic}}" alt="not found">
+  {{ end }}
+  <div class="storyfield jumbotron">
+  {{ .Story.Body }} <br>
+  {{ if eq .WriterName .Story.By }}
+      <a href="/story/{{.Story.Id}}/edit">Edit Your Story.</a>
+  {{end}}
+  </div>
+
+  <div class="infoWrapper">
+    <div class="rateChart">
+        <div class="panel panel-default">
+            <ul class="list-group list-group-flush text-center">
+              <div class="panel-heading">
+                  <h4 class="text-center">OverAll Rate <b><span id="overAll-stars"></span></b></h4>
+              </div>
+                <li class="list-group-item">
+                    <div class="skillLineDefault">
+                        <div class="pull-left scoreTitles">Premise/Concept</div>
+                        <div class="rating"><b><span id="premise-stars"></span></b></div>
+                    </div>
+                </li>
+
+                <li class="list-group-item">
+                    <div class="skillLineDefault">
+                        <div class="pull-left scoreTitles">Presentation</div>
+                        <div class="rating"><b><span id="presentation-stars"></span></b></div>
+                    </div>
+                </li>
+
+                <li class="list-group-item">
+                    <div class="skillLineDefault">
+                        <div class="pull-left scoreTitles">Structure/Plot,Pacing</div>
+                        <div class="rating"><b><span id="structure-stars"></span></b></div>
+                    </div>
+                </li>
+
+                <li class="list-group-item">
+                    <div class="skillLineDefault">
+                        <div class="pull-left scoreTitles">Characters & Dialogue</div>
+                        <div class="rating"><b><span id="characters-stars"></span></b></div>
+                    </div>
+                </li>
+
+                <li class="list-group-item">
+                    <div class="skillLineDefault">
+                        <div class="pull-left scoreTitles">Theme</div>
+                        <div class="rating"><b><span id="theme-stars"></span></b></div>
+                    </div>
+                </li>
+
+                <li class="list-group-item">
+                    <div class="skillLineDefault">
+                        <div class="pull-left scoreTitles">Style/Tone</div>
+                        <div class="rating"><b><span id="style-stars"></span></b></div>
+                    </div>
+                </li>
+
+                <li class="list-group-item">
+                    <div class="skillLineDefault">
+                        <div class="pull-left scoreTitles">Commercial Potential</div>
+                        <div class="rating"><b><span id="commercial-stars"></span></b></div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="infoChart">
+        <div class="panel panel-default">
+            <ul class="list-group list-group-flush text-center">
+              <div class="panel-heading">
+                  <h4 class="text-center">Story Information</h4>
+              </div>
+                <li class="list-group-item">
+                    <div class="skillLineDefault">
+                        <div class="infoTitles pull-left">Created On</div>
+                        <div class="rating">{{ .Story.CreatedOn }}</div>
+                    </div>
+                </li>
+
+                <li class="list-group-item">
+                    <div class="skillLineDefault">
+                        <div class="infoTitles pull-left">Category</div>
+                        <div class="rating"><a href="/cat/{{.Cat.Id}}">{{.Cat.Name}}</a></div>
+                    </div>
+                </li>
+
+                <li class="list-group-item">
+                    <div class="skillLineDefault">
+                        <div class="infoTitles pull-left">By</div>
+                        <div class="rating"><a href="/writer/{{.StoryWriter.Id}}">{{ .StoryWriter.Name }}</a></div>
+                    </div>
+                </li>
+
+                <li class="list-group-item">
+                    <div class="skillLineDefault">
+                        <div class="infoTitles pull-left">Viewed</div>
+                        <div class="rating">{{ .Story.ViewCount }}</div>
+                    </div>
+                </li>
+
+                <li class="list-group-item">
+                    <div class="skillLineDefault">
+                        <div class="infoTitles pull-left">Numeric Rate</div>
+                        <div class="rating"><strong>{{ .Rate.Overall }}</strong><small>/5 Out Of {{.Story.RateCount}} Votes</small></div>
+                    </div>
+                </li>
+
+                <li id="tagsField" class="list-group-item">
+                    <div class="skillLineDefault">
+                        <div class="infoTitles pull-left">Tags</div>
+                        <div class="">&#160;{{range .Tags }} #<a href="/tag/{{.Id}}">{{.Name}}</a>{{end}}</div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+  </div>
+  <div class="formWrapper">
+      <form class="rateForm">
+          <div class="rating-ability-wrapper">
+              <label class="control-label" for="rating">
+                  <span class="field-label-info"></span>
+                  <input type="hidden" id="premise-selected_rating" name="RatePrem" value="" required>
+              </label>
+              <h6>Premise/Concept</h6>
+              <div class="starbuts">
+                  <button type="button" class="premise-btnrating btn btn-default btn-sm" data-attr="1" id="premise-rating-star-1">
+                      <i class="fa fa-star" aria-hidden="true"></i>
+                  </button>
+                  <button type="button" class="premise-btnrating btn btn-default btn-sm" data-attr="2" id="premise-rating-star-2">
+                      <i class="fa fa-star" aria-hidden="true"></i>
+                  </button>
+                  <button type="button" class="premise-btnrating btn btn-default btn-sm" data-attr="3" id="premise-rating-star-3">
+                      <i class="fa fa-star" aria-hidden="true"></i>
+                  </button>
+                  <button type="button" class="premise-btnrating btn btn-default btn-sm" data-attr="4" id="premise-rating-star-4">
+                      <i class="fa fa-star" aria-hidden="true"></i>
+                  </button>
+                  <button type="button" class="premise-btnrating btn btn-default btn-sm" data-attr="5" id="premise-rating-star-5">
+                      <i class="fa fa-star" aria-hidden="true"></i>
+                  </button>
+              </div>
+          </div>
+          <div class="rating-ability-wrapper">
+              <label class="control-label" for="rating">
+                  <span class="field-label-info"></span>
+                  <input type="hidden" id="presentation-selected_rating" name="RatePres" value="" required>
+              </label>
+              <h6>Presentation</h6>
+              <div class="starbuts">
+              <button type="button" class="presentation-btnrating btn btn-default btn-sm" data-attr="1" id="presentation-rating-star-1">
+                  <i class="fa fa-star" aria-hidden="true"></i>
+              </button>
+              <button type="button" class="presentation-btnrating btn btn-default btn-sm" data-attr="2" id="presentation-rating-star-2">
+                  <i class="fa fa-star" aria-hidden="true"></i>
+              </button>
+              <button type="button" class="presentation-btnrating btn btn-default btn-sm" data-attr="3" id="presentation-rating-star-3">
+                  <i class="fa fa-star" aria-hidden="true"></i>
+              </button>
+              <button type="button" class="presentation-btnrating btn btn-default btn-sm" data-attr="4" id="presentation-rating-star-4">
+                  <i class="fa fa-star" aria-hidden="true"></i>
+              </button>
+              <button type="button" class="presentation-btnrating btn btn-default btn-sm" data-attr="5" id="presentation-rating-star-5">
+                  <i class="fa fa-star" aria-hidden="true"></i>
+              </button>
+              </div>
+          </div>
+          <div class="rating-ability-wrapper">
+              <label class="control-label" for="rating">
+                  <span class="field-label-info"></span>
+                  <input type="hidden" id="structure-selected_rating" name="RateStr" value="" required>
+              </label>
+              <h6>Structure/Plot & Pacing</h6>
+              <div class="starbuts">
+              <button type="button" class="structure-btnrating btn btn-default btn-sm" data-attr="1" id="structure-rating-star-1">
+                  <i class="fa fa-star" aria-hidden="true"></i>
+              </button>
+              <button type="button" class="structure-btnrating btn btn-default btn-sm" data-attr="2" id="structure-rating-star-2">
+                  <i class="fa fa-star" aria-hidden="true"></i>
+              </button>
+              <button type="button" class="structure-btnrating btn btn-default btn-sm" data-attr="3" id="structure-rating-star-3">
+                  <i class="fa fa-star" aria-hidden="true"></i>
+              </button>
+              <button type="button" class="structure-btnrating btn btn-default btn-sm" data-attr="4" id="structure-rating-star-4">
+                  <i class="fa fa-star" aria-hidden="true"></i>
+              </button>
+              <button type="button" class="structure-btnrating btn btn-default btn-sm" data-attr="5" id="structure-rating-star-5">
+                  <i class="fa fa-star" aria-hidden="true"></i>
+              </button>
+              </div>
+          </div>
+          <div class="rating-ability-wrapper">
+              <label class="control-label" for="rating">
+                  <span class="field-label-info"></span>
+                  <input type="hidden" id="characters-selected_rating" name="RateChar" value="" required>
+              </label>
+              <h6>Characters & Dialogue</h6>
+              <div class="starbuts">
+              <button type="button" class="characters-btnrating btn btn-default btn-sm" data-attr="1" id="characters-rating-star-1">
+                  <i class="fa fa-star" aria-hidden="true"></i>
+              </button>
+              <button type="button" class="characters-btnrating btn btn-default btn-sm" data-attr="2" id="characters-rating-star-2">
+                  <i class="fa fa-star" aria-hidden="true"></i>
+              </button>
+              <button type="button" class="characters-btnrating btn btn-default btn-sm" data-attr="3" id="characters-rating-star-3">
+                  <i class="fa fa-star" aria-hidden="true"></i>
+              </button>
+              <button type="button" class="characters-btnrating btn btn-default btn-sm" data-attr="4" id="characters-rating-star-4">
+                  <i class="fa fa-star" aria-hidden="true"></i>
+              </button>
+              <button type="button" class="characters-btnrating btn btn-default btn-sm" data-attr="5" id="characters-rating-star-5">
+                  <i class="fa fa-star" aria-hidden="true"></i>
+              </button>
+              </div>
+          </div>
+          <div class="rating-ability-wrapper">
+              <label class="control-label" for="rating">
+                  <span class="field-label-info"></span>
+                  <input type="hidden" id="theme-selected_rating" name="RateTheme" value="" required>
+              </label>
+              <h6>Theme</h6>
+              <div class="starbuts">
+              <button type="button" class="theme-btnrating btn btn-default btn-sm" data-attr="1" id="theme-rating-star-1">
+                  <i class="fa fa-star" aria-hidden="true"></i>
+              </button>
+              <button type="button" class="theme-btnrating btn btn-default btn-sm" data-attr="2" id="theme-rating-star-2">
+                  <i class="fa fa-star" aria-hidden="true"></i>
+              </button>
+              <button type="button" class="theme-btnrating btn btn-default btn-sm" data-attr="3" id="theme-rating-star-3">
+                  <i class="fa fa-star" aria-hidden="true"></i>
+              </button>
+              <button type="button" class="theme-btnrating btn btn-default btn-sm" data-attr="4" id="theme-rating-star-4">
+                  <i class="fa fa-star" aria-hidden="true"></i>
+              </button>
+              <button type="button" class="theme-btnrating btn btn-default btn-sm" data-attr="5" id="theme-rating-star-5">
+                  <i class="fa fa-star" aria-hidden="true"></i>
+              </button>
+              </div>
+          </div>
+          <div class="rating-ability-wrapper">
+              <label class="control-label" for="rating">
+                  <span class="field-label-info"></span>
+                  <input type="hidden" id="style-selected_rating" name="RateStyle" value="" required>
+              </label>
+              <h6>Style/Tone</h6>
+              <div class="starbuts">
+              <button type="button" class="style-btnrating btn btn-default btn-sm" data-attr="1" id="style-rating-star-1">
+                  <i class="fa fa-star" aria-hidden="true"></i>
+              </button>
+              <button type="button" class="style-btnrating btn btn-default btn-sm" data-attr="2" id="style-rating-star-2">
+                  <i class="fa fa-star" aria-hidden="true"></i>
+              </button>
+              <button type="button" class="style-btnrating btn btn-default btn-sm" data-attr="3" id="style-rating-star-3">
+                  <i class="fa fa-star" aria-hidden="true"></i>
+              </button>
+              <button type="button" class="style-btnrating btn btn-default btn-sm" data-attr="4" id="style-rating-star-4">
+                  <i class="fa fa-star" aria-hidden="true"></i>
+              </button>
+              <button type="button" class="style-btnrating btn btn-default btn-sm" data-attr="5" id="style-rating-star-5">
+                  <i class="fa fa-star" aria-hidden="true"></i>
+              </button>
+              </div>
+          </div>
+          <div class="rating-ability-wrapper">
+              <label class="control-label" for="rating">
+                  <span class="field-label-info"></span>
+                  <input type="hidden" id="commercial-selected_rating" name="RateCom" value="" required>
+              </label>
+              <h6>Commercial Potential</h6>
+              <div class="starbuts">
+              <button type="button" class="commercial-btnrating btn btn-default btn-sm" data-attr="1" id="commercial-rating-star-1">
+                  <i class="fa fa-star" aria-hidden="true"></i>
+              </button>
+              <button type="button" class="commercial-btnrating btn btn-default btn-sm" data-attr="2" id="commercial-rating-star-2">
+                  <i class="fa fa-star" aria-hidden="true"></i>
+              </button>
+              <button type="button" class="commercial-btnrating btn btn-default btn-sm" data-attr="3" id="commercial-rating-star-3">
+                  <i class="fa fa-star" aria-hidden="true"></i>
+              </button>
+              <button type="button" class="commercial-btnrating btn btn-default btn-sm" data-attr="4" id="commercial-rating-star-4">
+                  <i class="fa fa-star" aria-hidden="true"></i>
+              </button>
+              <button type="button" class="commercial-btnrating btn btn-default btn-sm" data-attr="5" id="commercial-rating-star-5">
+                  <i class="fa fa-star" aria-hidden="true"></i>
+              </button>
+              </div>
+          </div>
+          <button data-storyid="{{.Story.Id}}" id="sendRate" class="popupreg btn btn-primary"><i class="fa fa-paper-plane fa-fw" aria-hidden="true"></i></button>
+      </form>
+
+      <form class="commentForm">
+              <textarea id="comText" class="form-control" maxlength="500" placeholder="Your Comment..." required>{{if .Text }}{{.Text}}{{end}}</textarea>
+              <button data-storyid="{{.Story.Id}}" id="sendCom" class="popupreg btn btn-primary"><i class="fa fa-paper-plane fa-fw" aria-hidden="true"></i></button>
+      </form>
+  </div>
+  <hr>
+
+  <div class="jumbotron">
+          {{ $cWriterName := .WriterName}}
+          {{ $cStoryBy := .WriterName}}
+          {{ $StoryId := .Story.Id }}
+          {{ $ResComs := .Coms }}
+      {{ range .Coms}}
+        {{ if eq .ComId 0 }}
+        <div class="comment">
+            <div class="comText">
+            <strong><a class="backBlack" href="/writer/{{.By}}">{{ .By }}</a></strong>
+            <p class="comTextP">{{ .Text }}</p>
+            </div>
+          <small>At: {{ .CreatedOn }}</small>
+          <button class="exCom btn-xs rounded-circle"><i class="fa fa-comments-o" aria-hidden="true"></i></button>
+        {{ if eq $cWriterName .By }}
+            <button data-comText="{{.Text}}" data-comId="{{.Id}}" data-storyid="{{$StoryId}}"  class="exEdit btn-sm btn-info rounded-0"><i class="fa fa-edit fa-fw" aria-hidden="true"></i></button>
+            <button data-comid="{{.Id}}" data-storyid="{{$StoryId}}" class="drSure btn-sm btn-danger rounded-0"><i class="fa fa-trash fa-fw" aria-hidden="true"></i></button>
+        {{ end }}
+        </div>
+          <div class="ResField">
+              {{/* before ranging over each response we get the id of the current comment for comparsion */}}
+              {{ $comId := .Id }}
+          {{ range $ResComs }}
+              {{/* to check if this response belongs to the current comment. */}}
+              {{ if eq .ComId $comId}}
+                      <div class="ResCom">
+              <div class="comText">
+                  <strong><a class="backWhite" href="/writer/{{.By}}">{{ .By }}</a></strong>
+                  <p class="comTextP">{{ .Text }}</p>
+              </div>
+              <small>At: {{ .CreatedOn }} </small> {{ if eq $cWriterName .By }}
+                  <button data-comText="{{.Text}}" data-comId="{{.Id}}"  data-storyid="{{$StoryId}}" class="exEdit btn-sm btn-info rounded-0" href="/comment/{{.Id}}"><i class="fa fa-edit fa-fw" aria-hidden="true"></i></button>
+                  <button data-comid="{{.Id}}" data-storyid="{{$StoryId}}"  class="drSure btn-sm btn-danger rounded-0"><i class="fa fa-trash fa-fw" aria-hidden="true"></i></button>
+                                                   {{ end }}
+                      </div>
+              {{end}}
+          {{end}}
+              <form>
+                  <textarea class="input-group rounded-bottom" cols="30" rows="3" placeholder="Writer Your Reply..."></textarea>
+                  <div>
+                      <button data-storyid="{{ $StoryId }}" data-comid="{{.Id}}" class="sendResCom btn btn-sm btn-success">Send</button>
+                  </div>
+              </form>
+          </div>
+          {{end}}
+      {{end}}
+  </div>
+</div>
+
+<script>
+jQuery(document).ready(function($) {
+  // rate chart calculations
+  $("#overAll-stars").html(getStars({{.Rate.Overall}}));
+  $("#premise-stars").html(getStars({{.Rate.Premise}}));
+  $("#presentation-stars").html(getStars({{.Rate.Presentation}}));
+  $("#structure-stars").html(getStars({{.Rate.Structure}}));
+  $("#characters-stars").html(getStars({{.Rate.Characters}}));
+  $("#theme-stars").html(getStars({{.Rate.Theme}}));
+  $("#style-stars").html(getStars({{.Rate.Style}}));
+  $("#commercial-stars").html(getStars({{.Rate.Commercial}}));
+
+  function getStars(rating) {
+      // Round to nearest half
+      rating = Math.round(rating * 2) / 2;
+      var output = [];
+
+      // Append all the filled whole stars
+      for (var i = rating; i >= 1; i--)
+          output.push('<i class="fa fa-star" aria-hidden="true" style="color: gold;"></i>&nbsp;');
+
+      // If there is a half a star, append it
+      if (i == .5) output.push('<i class="fa fa-star-half-o" aria-hidden="true" style="color: gold;"></i>&nbsp;');
+
+      // Fill the empty stars
+      for (var i = (5 - rating); i >= 1; i--)
+          output.push('<i class="fa fa-star-o" aria-hidden="true" style="color: gold;"></i>&nbsp;');
+      return output.join('');
+  }
+  // premise system
+  $(".premise-btnrating").on('click',(function() {
+
+      var previous_value = $("#premise-selected_rating").val();
+
+      var selected_value = $(this).attr("data-attr");
+      $("#premise-selected_rating").val(selected_value);
+
+      for (i = 1; i <= selected_value; ++i) {
+          $("#premise-rating-star-"+i).toggleClass('btn-warning');
+          $("#premise-rating-star-"+i).toggleClass('btn-default');
+      }
+
+      for (ix = 1; ix <= previous_value; ++ix) {
+          $("#premise-rating-star-"+ix).toggleClass('btn-warning');
+          $("#premise-rating-star-"+ix).toggleClass('btn-default');
+      }
+
+  }));
+  // presentation system
+  $(".presentation-btnrating").on('click',(function() {
+
+      var previous_value = $("#presentation-selected_rating").val();
+
+      var selected_value = $(this).attr("data-attr");
+      $("#presentation-selected_rating").val(selected_value);
+
+      for (i = 1; i <= selected_value; ++i) {
+          $("#presentation-rating-star-"+i).toggleClass('btn-warning');
+          $("#presentation-rating-star-"+i).toggleClass('btn-default');
+      }
+
+      for (ix = 1; ix <= previous_value; ++ix) {
+          $("#presentation-rating-star-"+ix).toggleClass('btn-warning');
+          $("#presentation-rating-star-"+ix).toggleClass('btn-default');
+      }
+
+  }));
+  // structure system
+  $(".structure-btnrating").on('click',(function() {
+
+      var previous_value = $("#structure-selected_rating").val();
+
+      var selected_value = $(this).attr("data-attr");
+      $("#structure-selected_rating").val(selected_value);
+
+      for (i = 1; i <= selected_value; ++i) {
+          $("#structure-rating-star-"+i).toggleClass('btn-warning');
+          $("#structure-rating-star-"+i).toggleClass('btn-default');
+      }
+
+      for (ix = 1; ix <= previous_value; ++ix) {
+          $("#structure-rating-star-"+ix).toggleClass('btn-warning');
+          $("#structure-rating-star-"+ix).toggleClass('btn-default');
+      }
+
+  }));
+  // characters system
+  $(".characters-btnrating").on('click',(function() {
+
+      var previous_value = $("#characters-selected_rating").val();
+
+      var selected_value = $(this).attr("data-attr");
+      $("#characters-selected_rating").val(selected_value);
+
+      for (i = 1; i <= selected_value; ++i) {
+          $("#characters-rating-star-"+i).toggleClass('btn-warning');
+          $("#characters-rating-star-"+i).toggleClass('btn-default');
+      }
+
+      for (ix = 1; ix <= previous_value; ++ix) {
+          $("#characters-rating-star-"+ix).toggleClass('btn-warning');
+          $("#characters-rating-star-"+ix).toggleClass('btn-default');
+      }
+
+  }));
+  // theme system
+  $(".theme-btnrating").on('click',(function(e) {
+
+      var previous_value = $("#theme-selected_rating").val();
+
+      var selected_value = $(this).attr("data-attr");
+      $("#theme-selected_rating").val(selected_value);
+
+      for (i = 1; i <= selected_value; ++i) {
+          $("#theme-rating-star-"+i).toggleClass('btn-warning');
+          $("#theme-rating-star-"+i).toggleClass('btn-default');
+      }
+
+      for (ix = 1; ix <= previous_value; ++ix) {
+          $("#theme-rating-star-"+ix).toggleClass('btn-warning');
+          $("#theme-rating-star-"+ix).toggleClass('btn-default');
+      }
+
+  }));
+  // style system
+  $(".style-btnrating").on('click',(function(e) {
+
+      var previous_value = $("#style-selected_rating").val();
+
+      var selected_value = $(this).attr("data-attr");
+      $("#style-selected_rating").val(selected_value);
+
+      for (i = 1; i <= selected_value; ++i) {
+          $("#style-rating-star-"+i).toggleClass('btn-warning');
+          $("#style-rating-star-"+i).toggleClass('btn-default');
+      }
+
+      for (ix = 1; ix <= previous_value; ++ix) {
+          $("#style-rating-star-"+ix).toggleClass('btn-warning');
+          $("#style-rating-star-"+ix).toggleClass('btn-default');
+      }
+
+  }));
+  // commercial system
+  $(".commercial-btnrating").on('click',(function(e) {
+
+      var previous_value = $("#commercial-selected_rating").val();
+
+      var selected_value = $(this).attr("data-attr");
+      $("#commercial-selected_rating").val(selected_value);
+
+      for (i = 1; i <= selected_value; ++i) {
+          $("#commercial-rating-star-"+i).toggleClass('btn-warning');
+          $("#commercial-rating-star-"+i).toggleClass('btn-default');
+      }
+
+      for (ix = 1; ix <= previous_value; ++ix) {
+          $("#commercial-rating-star-"+ix).toggleClass('btn-warning');
+          $("#commercial-rating-star-"+ix).toggleClass('btn-default');
+      }
+
+  }));
+});
+</script>
+{{ template "footer.gohtml"}}

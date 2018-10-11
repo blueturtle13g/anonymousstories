@@ -1,0 +1,40 @@
+{{ define "searchNav"}}
+<div class="absolute">
+  <div class="sort">
+    <form  {{ if eq .Title "Categories"}} action="/cats" {{ else if eq .Title "Writers"}} action="/writers" {{else}} action="/" {{end}}method="post">
+
+      <div id="search">
+        <div class="search-container">
+          <button type="submit"><i class="fa fa-search"></i></button>
+          <input type="text" name="search" id="searchBar" {{ if eq .Title "Categories"}} placeholder="Categories" {{ else if eq .Title "Writers"}} placeholder="Writers" {{else}} placeholder="Titles Tags Stories..." {{end}}>
+        </div>
+      </div>
+
+      <div class="order hid">
+        Order by <br>
+        <label for="rate" class="control-label">Rate</label>
+        <input type="radio" id="rate" name="order" value="rate" checked />
+        <label for="date" class="control-label">Date</label>
+        <input type="radio" id="date" name="order" value="date" />
+      </div>
+
+      <div class="order hid">
+        Priority <br>
+        <label for="asc" class="control-label">Asc</label>
+        <input type="radio" id="asc" name="priority" value="asc" />
+        <label for="desc" class="control-label">Desc</label>
+        <input type="radio" id="desc" name="priority" value="desc" checked />
+      </div>
+
+      <div class="order">
+        <div class="btn-group">
+          <button type="button" class="btn btn-info"><a style="color: black; text-decoration: none;" href="/cats">Categories</a></button>
+          <button type="button" class="btn btn-info"><a style="color: black; text-decoration: none;" href="/writers">Writers</a></button>
+        </div>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+ {{ end }} <!-- searchBar -->

@@ -1,0 +1,44 @@
+{{ template "header.gohtml" .}}
+<br><br>
+{{ if .Err }}
+  <div class="center alert alert-danger" role="alert">
+    <h6>{{ .Err }}</h6>
+  </div>
+{{end}} <!-- if err -->
+{{ if .LenW }}
+    <div class="center alert alert-success" role="alert">
+      <h6>Cats: {{ .LenW }} Found</h6>
+    </div>
+    <br>
+{{end}} <!-- if LenW -->
+
+<div class="container">
+    <div class="card bg-light mb-3" style="max-width: 100rem;">
+        <div class="card-header myCard-header">Top Ten Writers</div>
+        <div class="card-body myCard-body">
+            <div class="card-text">
+                <ol>
+                {{ range .TopTenWriters }}
+                    <li><a href="/writer/{{.Id}}">{{.Name}}</a> with {{ .Rate }}<small>/5 Out Of {{ .RateCount }} Votes.</small></li>
+                {{end}} <!-- range TopStories -->
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="card bg-light mb-3" style="max-width: 100rem;">
+        <div class="card-header myCard-header">All Writers</div>
+        <div class="card-body myCard-body">
+            <div class="card-text">
+                <ol>
+                {{ range .Writers }}
+                    <li><a href="/writer/{{.Id}}">{{.Name}}</a> with {{ .Rate }}<small>/5 Out Of {{ .RateCount }} Vote.</small></li>
+                {{end}} <!-- range RecentStories -->
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+{{ template "footer.gohtml" .}}

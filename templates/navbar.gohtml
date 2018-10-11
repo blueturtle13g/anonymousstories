@@ -1,0 +1,57 @@
+<div class="topnav">
+  <a {{ if eq .Title "Anonymous Stories"}} class="active" {{ end }} href="/">AStories</a>
+  {{ if .WriterName }}
+  <a {{ if eq .Title .WriterName }} class="active" {{ end }} href="/profile/{{.WriterName}}">{{ .WriterName }}</a>
+  <a {{ if eq .Title "Tell Your Story" }} class="active" {{ end }} href="/tellStory">Tell Story</a>
+  {{end}}
+  <a {{ if eq .Title "Charts"}} class="active" {{ end }} href="/charts">Charts</a>
+  <a {{ if eq .Title "About AStories"}} class="active" {{ end }} href="/about">About Us</a>
+  <a {{ if eq .Title "Contact Us"}} class="active" {{ end }} href="/contact">Contact Us</a>
+  {{ if .WriterName }}
+  <a href="/out" id="outSure">Log Out</a>
+  <button  id="LogOut" style="display: none;"><a href="/out"></a></button>
+  {{ else }}
+  <a {{ if eq .Title "Sign Page" }} class="active" {{ end }} href="/in">Log In</a>
+  {{ end }}
+    <div class="search-container">
+        <button id="searchIcon" type="button" name="button"><i class="fa fa-search"></i></button>
+    </div>
+</div>
+
+<div id="appear" class="absolute">
+  <div class="sort">
+    <form action="/" method="post">
+
+      <div id="search">
+        <div class="search-container">
+          <button type="submit"><i class="fa fa-search"></i></button>
+          <input type="text" name="search" id="searchBar" placeholder="Titles Tags Stories...">
+        </div>
+      </div>
+
+      <div class="order hid">
+        Order by <br>
+        <label for="rate" class="control-label">Rate</label>
+        <input type="radio" id="rate" name="order" value="rate">
+        <label for="date" class="control-label">Date</label>
+        <input type="radio" id="date" name="order" value="date">
+      </div>
+
+      <div class="order hid">
+        Priority <br>
+        <label for="rate" class="control-label">Asc</label>
+        <input type="radio" id="asc" name="priority" value="asc">
+        <label for="date" class="control-label">Desc</label>
+        <input type="radio" id="desc" name="priority" value="desc">
+      </div>
+
+      <div class="order">
+        <div class="btn-group">
+          <button type="button" class="btn btn-info"><a style="color: black; text-decoration: none;" href="/cats">Categories</a></button>
+          <button type="button" class="btn btn-info"><a style="color: black; text-decoration: none;" href="/writers">Writers</a></button>
+        </div>
+      </div>
+
+    </form>
+  </div>
+</div>

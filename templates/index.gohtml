@@ -1,0 +1,59 @@
+{{ template "header.gohtml" .}}
+{{ if .Err }}
+  <div class="center alert alert-danger" role="alert">
+    <h6>{{ .Err }}</h6>
+  </div>
+{{else if .Cong }}
+  <div class="center alert alert-success" role="alert">
+      <h6>{{ .Cong }}</h6>
+  </div>
+{{ end }}
+
+<!-- if msg -->
+{{ if .LenS }}
+<div class="center alert alert-success" role="alert">
+  <h6>Stories: {{ .LenS }} Found</h6>
+  <h6>Tags: {{ .LenT }} Found</h6>
+</div>
+<br>
+{{end}} <!-- if LenS -->
+{{ if .Tags }}
+<div class="container">
+  <h2>Tags</h2>
+  <div class="card bg-light mb-3" style="max-width: 100rem;">
+    <div class="card-body">
+
+      <p class="storyBody card-text">{{ range .Tags }}| <a href="/tag/{{.Id}}">#{{ .Name}}</a>{{end}}</p>
+
+    </div>
+  </div>
+</div>
+{{end}} <!-- if tags -->
+<br>
+
+{{ if .Stories }}
+<div class="container">
+  {{ if .LenS }}
+  <h2>Stories</h2>
+  {{end}}
+  {{ range .Stories }}
+    <div class="card bg-light mb-3" style="max-width: 100rem;">
+      <div class="card-header"><a href="/story/{{.Id}}">{{ .Title}}</a></div>
+      <div class="card-body">
+        <p class="storyBody card-text">{{ .Body}}</p>
+        <p class="card-text">
+        <small class="text-muted">Category: {{ .Cat }} | By: {{ .By }} | Rate: {{ if eq .Rate 0.0 }} Not Rated Yet.
+                                                                  {{ else }}
+                                                                    <strong>{{ .Rate }}</strong><small>/5 Out Of {{ .RateCount}} Vote.</small>
+                                                                  {{ end }}
+                                                            | CreatedOn: {{ .CreatedOn}}
+
+                                                          </small>
+      </p>
+      </div>
+    </div>
+  {{end}} <!-- range story -->
+</div>
+ {{end}} <!-- if story -->
+
+{{ template "footer.gohtml" .}}
