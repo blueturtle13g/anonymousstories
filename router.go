@@ -7,6 +7,7 @@ import (
 	"html/template"
 	"net/http"
 	"time"
+	"fmt"
 )
 
 var (
@@ -20,6 +21,7 @@ func init() {
 	sessionManager.Lifetime(time.Hour * 6) // Set the maximum session lifetime to 1 hour.
 	sessionManager.Persist(false)          // Persist the session after a user has closed their browser.
 }
+
 
 func Routes() {
 	router := httprouter.New()
@@ -40,9 +42,6 @@ func Routes() {
 
 	router.GET("/story/:id/edit", EditStory)
 	router.POST("/story/:id/edit", EditStoryProcess)
-
-	router.GET("/profile/:id/editPassword", EditPassword)
-	router.POST("/profile/:id/editPassword", EditPasswordProcess)
 
 	router.GET("/", Index)
 	router.POST("/", IndexProcess)
@@ -67,6 +66,7 @@ func Routes() {
 
 	router.GET("/story/:id", SingleStory)
 	router.POST("/story/:id", SingleStoryProcess)
-
-	http.ListenAndServe(":8080", sessionManager.Use(router))
+	if err := http.ListenAndServe(":8080", sessionManager.Use(router)); err != nil{
+		fmt.Println(err)
+	}
 }

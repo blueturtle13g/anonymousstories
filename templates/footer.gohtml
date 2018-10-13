@@ -169,6 +169,60 @@
             });
             confirmBox.show("slide", {direction: "up"}, 500);
         });
+
+        $("#dImgPSure").click(function (e) {
+            e.preventDefault();
+            let confirmBox = $("#confirmBox");
+            confirmBox.find(".message").html("<h5>Are you sure?</h5>");
+            confirmBox.find(".yes").unbind().click(function () {
+                $.ajax({
+                    url: "/profile/{{.Writer.Id}}/edit",
+                    type: 'post',
+                    dataType: 'html',
+                    data : { submit : "DeleteImg",
+                    },
+                    success : function(data) {
+                        if (data === "done"){
+                            window.location.reload();
+                        } else {
+                            errAlert("<h5>Your operation doesn't get completed</h5>")
+                        }
+                    }
+                });
+            });
+            confirmBox.find(".no").unbind().click(function () {
+                confirmBox.hide();
+            });
+            confirmBox.show("slide", {direction: "up"}, 500);
+        });
+
+       $("#dImgSSure").click(function (e) {
+            var storyId = $(this).data("storyid");
+            e.preventDefault();
+            let confirmBox = $("#confirmBox");
+            confirmBox.find(".message").html("<h5>Are you sure?</h5>");
+            confirmBox.find(".yes").unbind().click(function () {
+                $.ajax({
+                    url: "/story/"+storyId+"/edit",
+                    type: 'post',
+                    dataType: 'html',
+                    data : { submit : "DeleteImg",
+                    },
+                    success : function(data) {
+                        if (data === "done"){
+                            window.location.reload();
+                        } else {
+                            errAlert("<h5>Your operation doesn't get completed</h5>")
+                        }
+                    }
+                });
+            });
+            confirmBox.find(".no").unbind().click(function () {
+                confirmBox.hide();
+            });
+            confirmBox.show("slide", {direction: "up"}, 500);
+        });
+
         $("#dpSure").click(function (e) {
             e.preventDefault();
             let confirmBox = $("#confirmBox");

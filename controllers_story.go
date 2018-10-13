@@ -6,6 +6,8 @@ import (
 
 	"fmt"
 	"github.com/julienschmidt/httprouter"
+	"os"
+	"path/filepath"
 )
 
 func SingleStory(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
@@ -248,11 +250,36 @@ func EditStoryProcess(w http.ResponseWriter, r *http.Request, ps httprouter.Para
 	}
 	sentFlash := make(map[string]interface{})
 	if r.FormValue("submit") == "Delete" {
+		// first thing we should take care of, is deleting photo
+		wd, err := os.Getwd()
+		if err != nil {
+			fmt.Println(err)
+		}
+		StoryPic := filepath.Join(wd, "static", "pic", "stories", strconv.Itoa(psStory.Id), psStory.Pic)
+		if err := os.Remove(StoryPic); err != nil {
+			fmt.Println(err)
+		}
 		if affect := deleteStory(psStory.Id); affect < 0 {
 			fmt.Println("deletion of story didn't happen")
 		}
 		if err := session.PutString(w, "Cong", "Your Story Is Deleted."); err != nil {
 			fmt.Println(err)
+		}
+		w.Write([]byte("done"))
+		return
+	}
+	fmt.Println("submit: ", r.FormValue("submit"))
+	if r.FormValue("submit") == "DeleteImg" {
+		wd, err := os.Getwd()
+		if err != nil {
+			fmt.Println(err)
+		}
+		StoryPic := filepath.Join(wd, "static", "pic", "stories", strconv.Itoa(psStory.Id), psStory.Pic)
+		if err := os.Remove(StoryPic); err != nil {
+			fmt.Println(err)
+		}
+		if affect := deleteStoryPic(psStory.Id); affect < 1 {
+			fmt.Println("Your Image Can't Be Deleted.")
 		}
 		w.Write([]byte("done"))
 		return
@@ -267,13 +294,13 @@ func EditStoryProcess(w http.ResponseWriter, r *http.Request, ps httprouter.Para
 		return
 	}
 
-	file, multipartFileHeader, err := r.FormFile("pic")
+	file, FileHeader, err := r.FormFile("pic")
 	if err != nil {
 		fmt.Println(err)
 	}
 	defer file.Close()
 	var picName string
-	if multipartFileHeader.Filename != "" {
+	if err != http.ErrMissingFile && len(FileHeader.Filename) != 0{
 		if valid := detectFileType(file); !valid {
 			sentFlash["Err"] = "Please Upload An Image, Other Types Are Not Supported."
 			if err := session.PutObject(w, "sentFlash", sentFlash); err != nil {
@@ -283,6 +310,7 @@ func EditStoryProcess(w http.ResponseWriter, r *http.Request, ps httprouter.Para
 			return
 		}
 		picName = processStoryPic(file, psStory)
+		defer file.Close()
 	}
 	title := r.FormValue("title")
 	body := r.FormValue("body")
@@ -376,12 +404,12 @@ func TellStoryProcess(w http.ResponseWriter, r *http.Request, _ httprouter.Param
 		return
 	}
 
-	file, multipartFileHeader, err := r.FormFile("pic")
+	file, FileHeader, err := r.FormFile("pic")
 	if err != nil {
 		fmt.Println(err)
 	}
-	defer file.Close()
-	if multipartFileHeader.Filename != "" {
+	var missFile bool
+	if err != http.ErrMissingFile && len(FileHeader.Filename) != 0{
 		if valid := detectFileType(file); !valid {
 			sentFlash["Err"] = "Please Upload An Image, Other Types Are Not Supported."
 			sentFlash["TitleStory"] = title
@@ -395,6 +423,9 @@ func TellStoryProcess(w http.ResponseWriter, r *http.Request, _ httprouter.Param
 			http.Redirect(w, r, "/tellStory", 303)
 			return
 		}
+		defer file.Close()
+	}else{
+		missFile = true
 	}
 
 	var warnings []string
@@ -424,7 +455,8 @@ func TellStoryProcess(w http.ResponseWriter, r *http.Request, _ httprouter.Param
 		http.Redirect(w, r, "/tellStory", 302)
 		return
 	}
-	if multipartFileHeader.Filename != "" {
+
+	if !missFile && len(FileHeader.Filename) != 0 {
 		story, _, _ := getStoryById(storyId)
 		picName := processStoryPic(file, story)
 		story.Pic = picName

@@ -3,13 +3,13 @@ package main
 import (
 	"fmt"
 	"github.com/julienschmidt/httprouter"
-	"golang.org/x/crypto/bcrypt"
-	"log"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strconv"
 	"strings"
+	"golang.org/x/crypto/bcrypt"
+	"log"
 )
 
 func SingleWriter(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
@@ -37,12 +37,12 @@ func SingleWriter(w http.ResponseWriter, r *http.Request, ps httprouter.Params) 
 
 
 	var topTen []Story
-	if len(getAllStories("rate", "")) > 10{
+	if len(getWritersStories(writer.Id)) > 10{
 		for i:= 9; i >= 0; i--{
-			topTen = append(topTen, getAllStories("rate", "")[i])
+			topTen = append(topTen, sortStoriesByRate(getWritersStories(writer.Id))[i])
 		}
 	}else{
-		topTen = getAllStories("rate", "")
+		topTen = sortStoriesByRate(getWritersStories(writer.Id))
 	}
 	gotFlash["TopTenStories"] = topTen
 	if err := tpl.ExecuteTemplate(w, "writer.gohtml", gotFlash); err != nil {
@@ -146,12 +146,12 @@ func Profile(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	gotFlash["Cats"] = getWritersCats(cWriter.Id)
 
 	var topTen []Story
-	if len(getAllStories("rate", "")) > 10{
+	if len(getWritersStories(cWriter.Id)) > 10{
 		for i:= 9; i >= 0; i--{
-			topTen = append(topTen, getAllStories("rate", "")[i])
+			topTen = append(topTen, sortStoriesByDate(getWritersStories(cWriter.Id))[i])
 		}
 	}else{
-		topTen = getAllStories("rate", "")
+		topTen = sortStoriesByDate(getWritersStories(cWriter.Id))
 	}
 	gotFlash["TopTenStories"] = topTen
 	if err := tpl.ExecuteTemplate(w, "profile.gohtml", gotFlash); err != nil {
@@ -230,7 +230,6 @@ func EditProfileProcess(w http.ResponseWriter, r *http.Request, ps httprouter.Pa
 		if err := os.Remove(WriterPic); err != nil {
 			fmt.Println(err)
 		}
-		fmt.Println("writerid: ", cWriter.Id)
 		if affect := deleteWriterById(cWriter.Id); affect < 1 {
 			fmt.Println("Your Account Can't Be Deleted.")
 		}
@@ -239,6 +238,76 @@ func EditProfileProcess(w http.ResponseWriter, r *http.Request, ps httprouter.Pa
 			fmt.Println(err)
 		}
 		w.Write([]byte("done"))
+		return
+	}
+	fmt.Println("submit: ", submit)
+	if submit == "DeleteImg" {
+		fmt.Println("got to delete img")
+		wd, err := os.Getwd()
+		if err != nil {
+			fmt.Println(err)
+		}
+		WriterPic := filepath.Join(wd, "static", "pic", "pros", strconv.Itoa(cWriter.Id), cWriter.Pic)
+		if err := os.Remove(WriterPic); err != nil {
+			fmt.Println(err)
+		}
+		fmt.Println("writerid: ", cWriter.Id)
+		if affect := deleteWritersPic(cWriter.Id); affect < 1 {
+			fmt.Println("Your Picture Can't Be Deleted.")
+		}
+		// if successful
+		w.Write([]byte("done"))
+		return
+	}
+
+	if submit == "Update Password"{
+		cPass := r.FormValue("cPass")
+		newPass := r.FormValue("newPass")
+		confirmPass := r.FormValue("confirmPass")
+		hashed := cWriter.Password
+		// check to see if the password is correct
+		if err := bcrypt.CompareHashAndPassword([]byte(hashed), []byte(cPass)); err != nil {
+			sentFlash["Err"] = "Your Current Password Is Wrong."
+			if err := session.PutObject(w, "sentFlash",sentFlash); err != nil {
+				fmt.Println(err)
+			}
+			http.Redirect(w, r, "/profile/"+cWriter.Name+"/edit", 303)
+			return
+		}
+
+		if newPass != confirmPass {
+			sentFlash["Err"] = "Your New Password Doesn't Match With The Confirm Password."
+			if err := session.PutObject(w, "sentFlash",sentFlash); err != nil {
+				fmt.Println(err)
+			}
+			http.Redirect(w, r, "/profile/"+cWriter.Name+"/edit", 303)
+			return
+		}
+		if len(newPass) < 8 || len(newPass) > 50 {
+			sentFlash["Err"] = "The Length Of Your Password Should Be Between 8 And 50 Characters."
+			if err := session.PutObject(w, "sentFlash",sentFlash); err != nil {
+				fmt.Println(err)
+			}
+			http.Redirect(w, r, "/profile/"+cWriter.Name+"/edit", 303)
+			return
+		}
+		hash, err := bcrypt.GenerateFromPassword([]byte(newPass), bcrypt.DefaultCost)
+		if err != nil {
+			log.Fatal(err)
+		}
+		if affect := updatePass(cWriter.Id, string(hash)); affect < 1 {
+			sentFlash["Err"] = "Your New Password Didn't Change, Please Try Again."
+			if err := session.PutObject(w, "sentFlash",sentFlash); err != nil {
+				fmt.Println(err)
+			}
+			http.Redirect(w, r, "/profile/"+cWriter.Name+"/edit", 303)
+			return
+		}
+
+		if err := session.PutString(w, "Cong", "Your Password Has Been Updated."); err != nil {
+			fmt.Println(err)
+		}
+		http.Redirect(w, r, "/profile/"+cWriter.Name, 303)
 		return
 	}
 
@@ -252,13 +321,13 @@ func EditProfileProcess(w http.ResponseWriter, r *http.Request, ps httprouter.Pa
 		return
 	}
 
-	file, multipartFileHeader, err := r.FormFile("pic")
+	file, FileHeader, err := r.FormFile("pic")
 	if err != nil {
 		fmt.Println(err)
 	}
 
 	var picName string
-	if multipartFileHeader.Filename != "" {
+	if err != http.ErrMissingFile && len(FileHeader.Filename) != 0{
 		if valid := detectFileType(file); !valid {
 			sentFlash["Err"] = "Please Upload An Image, Other Types Are Not Supported."
 			if err := session.PutObject(w, "sentFlash", sentFlash); err != nil {
@@ -268,8 +337,8 @@ func EditProfileProcess(w http.ResponseWriter, r *http.Request, ps httprouter.Pa
 			return
 		}
 		picName = processProPic(file, cWriter)
+		defer file.Close()
 	}
-	defer file.Close()
 
 	upWriter := Writer{Id: cWriter.Id, Name: strings.TrimSpace(username), Email: strings.TrimSpace(email), Quote: strings.TrimSpace(quote), Permission: permission}
 	if picName != "" {
@@ -306,99 +375,4 @@ func EditProfileProcess(w http.ResponseWriter, r *http.Request, ps httprouter.Pa
 	}
 	// in case user has changed username, we don't use the previous one.
 	http.Redirect(w, r, "/profile/"+username, 302)
-}
-
-func EditPassword(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	session := sessionManager.Load(r)
-	var cWriter Writer
-	var psWriter Writer
-	parameter := ps.ByName("id")
-	if WriterId, err := strconv.Atoi(parameter); err != nil {
-		psWriter = getWriterByName(parameter)
-	} else {
-		psWriter = getWriterById(WriterId)
-	}
-	if WriterId, err := session.GetInt("WriterId"); err != nil {
-		fmt.Println(err)
-	} else if WriterId > 0 {
-		cWriter = getWriterById(WriterId)
-	} else if WriterId < 1 || cWriter != psWriter {
-		http.Redirect(w, r, "/", 303)
-		return
-	}
-	gotFlash := make(map[string]interface{})
-	var err error
-	if gotFlash["Err"], err = session.PopString(w, "Err"); err != nil {
-		fmt.Println(err)
-	}
-
-	gotFlash["Title"] = cWriter.Name
-	gotFlash["WriterName"] = cWriter.Name
-
-	if err := tpl.ExecuteTemplate(w, "editPassword.gohtml", gotFlash); err != nil {
-		fmt.Println(err)
-	}
-}
-
-func EditPasswordProcess(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	session := sessionManager.Load(r)
-	var cWriter Writer
-	var psWriter Writer
-	parameter := ps.ByName("id")
-	if WriterId, err := strconv.Atoi(parameter); err != nil {
-		psWriter = getWriterByName(parameter)
-	} else {
-		psWriter = getWriterById(WriterId)
-	}
-	if WriterId, err := session.GetInt("WriterId"); err != nil {
-		fmt.Println(err)
-	} else if WriterId > 0 {
-		cWriter = getWriterById(WriterId)
-	} else if WriterId < 1 || cWriter != psWriter {
-		http.Redirect(w, r, "/", 303)
-		return
-	}
-	cPass := r.FormValue("cPass")
-	newPass := r.FormValue("newPass")
-	confirmPass := r.FormValue("confirmPass")
-	hashed := cWriter.Password
-	// check to see if the password is correct
-	if err := bcrypt.CompareHashAndPassword([]byte(hashed), []byte(cPass)); err != nil {
-		if err := session.PutString(w, "Err", "Your Current Password Is Wrong."); err != nil {
-			fmt.Println(err)
-		}
-		http.Redirect(w, r, "/profile/"+cWriter.Name+"/editPassword", 303)
-		return
-	}
-
-	if newPass != confirmPass {
-		if err := session.PutString(w, "Err", "Your New Password Doesn't Match With The Confirm Password."); err != nil {
-			fmt.Println(err)
-		}
-		http.Redirect(w, r, "/profile/"+cWriter.Name+"/editPassword", 303)
-		return
-	}
-	if len(newPass) < 8 || len(newPass) > 50 {
-		if err := session.PutString(w, "Err", "The Length Of Your Password Should Be Between 8 And 50 Characters."); err != nil {
-			fmt.Println(err)
-		}
-		http.Redirect(w, r, "/profile/"+cWriter.Name+"/editPassword", 303)
-		return
-	}
-	hash, err := bcrypt.GenerateFromPassword([]byte(newPass), bcrypt.DefaultCost)
-	if err != nil {
-		log.Fatal(err)
-	}
-	if affect := updatePass(cWriter.Id, string(hash)); affect < 1 {
-		if err := session.PutString(w, "Err", "Your New Password Didn't Change, Please Try Again."); err != nil {
-			fmt.Println(err)
-		}
-		http.Redirect(w, r, "/profile/"+cWriter.Name+"/editPassword", 303)
-		return
-	}
-
-	if err := session.PutString(w, "Cong", "Your Password Has Been Updated."); err != nil {
-		fmt.Println(err)
-	}
-	http.Redirect(w, r, "/profile/"+cWriter.Name, 303)
 }

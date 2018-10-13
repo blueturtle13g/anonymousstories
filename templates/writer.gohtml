@@ -56,4 +56,18 @@
         </div>
     </div>
 </div>
+<div class="container">
+    <div class="card bg-light mb-3" style="max-width: 100rem;">
+        <div class="card-header myCard-header">Categories</div>
+        <div class="card-body myCard-body">
+            <div class="card-text">
+                <ol>
+                {{ range .Cats }}
+                    <li><a href="/cat/{{.Id}}">{{.Name}}</a> with {{ .Rate }}<small>/5 Out Of {{ .RateCount }} Vote.</small> Created On {{.CreatedOn}}</li>
+                {{end}} <!-- range RecentStories -->
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
 {{ template "footer.gohtml" .}}

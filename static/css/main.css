@@ -5,8 +5,16 @@
   display: none;
 }
 
+.mBut{
+  margin-top: -70px!important;
+}
+
 .control-label{
   margin: 1px!important;
+}
+
+.probut{
+  cursor: pointer;
 }
 
 #showPass{
@@ -516,7 +524,6 @@ button > a:hover{
   text-align: center;
   max-width: 600px;
   margin: 0 auto;
-  padding-bottom: -20px!important;
 }
 
 body {

@@ -101,11 +101,43 @@ func deleteWriterById(WriterId int) int64 {
 	if affect := updateDeletionDependencies(getWriterById(WriterId)); affect < 1 {
 		fmt.Println("updateDeletionDependencies of story failed.")
 	}
-	stmt, err := DB.Prepare("update writers set name= $1, email= $2, permission= $3, password= $4, deletedon= $5 where id= $6")
+	stmt, err := DB.Prepare("update writers set name= $1, email= $2, pic= $3, permission= $4, password= $5, deletedOn= $6 where id= $7")
 	if err != nil {
 		fmt.Println(err)
 	}
-	res, err := stmt.Exec(WriterId, WriterId, false, WriterId, getNow(), WriterId)
+	res, err := stmt.Exec(WriterId, WriterId, "", false, WriterId, getNow(), WriterId)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	affect, err := res.RowsAffected()
+	if err != nil {
+		fmt.Println(err)
+	}
+	return affect
+}
+func deleteStoryPic(storyId int) int64{
+	stmt, err := DB.Prepare("update stories set pic= $1 where id= $2")
+	if err != nil {
+		fmt.Println(err)
+	}
+	res, err := stmt.Exec("", storyId)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	affect, err := res.RowsAffected()
+	if err != nil {
+		fmt.Println(err)
+	}
+	return affect
+}
+func deleteWritersPic(WriterId int) int64 {
+	stmt, err := DB.Prepare("update writers set pic= $1 where id= $2")
+	if err != nil {
+		fmt.Println(err)
+	}
+	res, err := stmt.Exec("", WriterId)
 	if err != nil {
 		fmt.Println(err)
 	}

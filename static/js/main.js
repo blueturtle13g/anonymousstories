@@ -1,4 +1,9 @@
 // for pic upload
+
+$(".file-upload-btn").click(function () {
+    $(".file-upload").show();
+});
+
 function readURL(input) {
     if (input.files && input.files[0]) {
 
@@ -9,8 +14,6 @@ function readURL(input) {
 
             $('.file-upload-image').attr('src', e.target.result);
             $('.file-upload-content').show();
-
-            $('.image-title').html(input.files[0].name);
         };
 
         reader.readAsDataURL(input.files[0]);
@@ -22,6 +25,7 @@ function readURL(input) {
 
 function removeUpload() {
     $('.file-upload-input').replaceWith($('.file-upload-input').clone());
+    $('.file-upload-input').val("");
     $('.file-upload-content').hide();
     $('.image-upload-wrap').show();
 }

@@ -17,7 +17,7 @@ import (
 	"time"
 )
 
-func main() {
+func main(){
 	defer DB.Close()
 	Routes()
 }

@@ -4,7 +4,7 @@
     {{if .Err }}
         <div class="center alert alert-danger" role="alert">
             <ul>
-                <li><h6>{{ .Err }}</h6></li>
+                <h6>{{ .Err }}</h6>
             </ul>
         </div>
     {{ else if .Errs }}
@@ -22,7 +22,31 @@
     <div class="container">
     <form method="post" enctype="multipart/form-data">
 
-        <h3 id="tellHeader" class="center">Edit Your Details</h3><hr>
+        <div class="center">
+        {{ if .Writer.Pic }}
+            <img class="propic mBut" src="/static/pic/pros/{{.Writer.Id}}/{{.Writer.Pic}}">
+            <br>
+            <button class="file-upload-btn center picButtons" type="button" onclick="$('.file-upload-input').trigger( 'click' )">Change Image</button>
+            <button id="dImgPSure" class="picButtons">Delete Image</button>
+        {{ else }}
+            <button class="file-upload-btn center" type="button" onclick="$('.file-upload-input').trigger( 'click' )">Choose Image</button>
+        {{end}}
+        </div>
+
+        <div class="file-upload">
+            <div class="image-upload-wrap">
+                <input class="file-upload-input" name="pic" type='file' onchange="readURL(this);" accept="image/*" />
+                <div class="drag-text">
+                    <h3>Drag and drop a file or select add Image</h3>
+                </div>
+            </div>
+            <div class="file-upload-content">
+                <img class="file-upload-image" src="#" alt="your image" />
+                <div class="image-title-wrap">
+                    <button type="button" onclick="removeUpload()" class="probut btn-danger">Remove</button>
+                </div>
+            </div>
+        </div>
         <div class="row">
 
             <div class="col-md-4">
@@ -80,33 +104,62 @@
 
         </div>
 
-        <div class="file-upload">
-            <button class="file-upload-btn" type="button" onclick="$('.file-upload-input').trigger( 'click' )">Change Image</button>
-
-            <div class="image-upload-wrap">
-                <input class="file-upload-input" name="pic" type='file' onchange="readURL(this);" accept="image/*" />
-                <div class="drag-text">
-                    <h3>Drag and drop a file or select add Image</h3>
-                </div>
-            </div>
-            <div class="file-upload-content">
-                <img class="file-upload-image" src="#" alt="your image" />
-                <div class="image-title-wrap">
-                    <button type="button" onclick="removeUpload()" class="probut btn-danger">Remove<span class="image-title"></span></button>
-                </div>
-            </div>
-        </div>
-
         <div class="login-register">
-            <input id="upProSubmit" type="submit" name="submit" class="probut btn btn-primary" value="Update">
+            <input id="upProSubmit" type="submit" name="submit" class="probut btn btn-success" value="Update">
             <button id="dpSure" class="probut btn btn-danger">Delete Account</button>
-            <a href="/profile/{{.Writer.Id}}/editPassword"><input type="button" class="probut btn btn-warning" value="Change Password"></a>
-            <input type="hidden" name="from"  value="editProfile"/>
+            <input type="hidden" name="from" value="editProfile"/>
         </div>
         <div class="col-12 warns">
             <label id="submitWarn" style="display: none;" class="inputErr cols-sm-2 control-label"><strong>Please Fix Errors And Try Again</strong></label>
         </div>
-    </form>
+        <br>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="cPass" class="control-label">Current Password</label>
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-lock fa-lg" aria-hidden="true"></i></span>
+                            <input type="password" maxlength="50" class="passes form-control" name="cPass" id="cPass" required/>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="password" class="control-label">New Password</label>
+                        <div class="input-group">
+                            <span id="passIcon" class="input-group-addon"><i class="fa fa-lock fa-lg" aria-hidden="true"></i></span>
+                            <input type="password" maxlength="50" class="passes form-control" name="newPass" id="password" required/>
+                        </div>
+                    </div>
+                    <div class="col-12 warns stickTop">
+                        <label for="password" id="passWarn" style="display: none;" class="inputErr cols-sm-2 control-label"><strong>At Least 8 Characters</strong></label>
+                    </div>
+                    <div id="showPass" class="col-12 form-group">
+                        <label for="shP" class="cols-sm-2 control-label">Show Password</label>
+                        <input id="shP" type="checkbox">
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="confirm" class="control-label">Confirm Password</label>
+                        <div class="input-group">
+                            <span id="confIcon" class="input-group-addon"><i class="fa fa-lock fa-lg" aria-hidden="true"></i></span>
+                            <input type="password" maxlength="50" class="passes form-control" name="confirmPass" id="confirm" required/>
+                        </div>
+                    </div>
+                    <div class="col-12 warns stickTop">
+                        <label id="confWarn" style="display: none;" class="inputErr cols-sm-2 control-label"><strong>Doesn't Match</strong></label>
+                    </div>
+                </div>
+
+            </div> <!-- row -->
+
+            <div class="login-register">
+                <input id="upPassSubmit" type="submit" name="submit" class="btn btn-primary" value="Update Password">
+            </div>
+        </form>
 </div>
 </div>
     {{ template "footer.gohtml"}}

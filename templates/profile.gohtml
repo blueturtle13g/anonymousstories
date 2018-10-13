@@ -10,7 +10,7 @@
         {{ $writerId := .Writer.Id }}
         {{ $writerPic := .Writer.Pic }}
         {{ if .Writer.Pic }}
-        <img class="propic" src="/static/pic/pros/{{$writerId}}/{{$writerPic}}">
+            <a href="/profile/{{.Writer.Id}}/edit"><img class="propic" src="/static/pic/pros/{{$writerId}}/{{$writerPic}}"></a>
         {{ end }}
             <br><br>
             <div class="proinfo">
