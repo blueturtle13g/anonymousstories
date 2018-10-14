@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"time"
 	"fmt"
+	"os"
 )
 
 var (
@@ -20,6 +21,12 @@ func init() {
 	tpl = template.Must(template.ParseGlob("templates/*"))
 	sessionManager.Lifetime(time.Hour * 6) // Set the maximum session lifetime to 1 hour.
 	sessionManager.Persist(false)          // Persist the session after a user has closed their browser.
+}
+
+func port() string {
+	port := os.Getenv("PORT")
+	port = ":" + port
+	return port
 }
 
 
@@ -66,7 +73,7 @@ func Routes() {
 
 	router.GET("/story/:id", SingleStory)
 	router.POST("/story/:id", SingleStoryProcess)
-	if err := http.ListenAndServe(":8080", sessionManager.Use(router)); err != nil{
+	if err := http.ListenAndServe(port(), sessionManager.Use(router)); err != nil{
 		fmt.Println(err)
 	}
 }

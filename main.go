@@ -15,6 +15,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"log"
 )
 
 func main(){
@@ -77,23 +78,9 @@ func sortStoriesByRate(stories []Story) (sortedStories []Story) {
 }
 
 func dbConn() *sql.DB {
-	const (
-		HOST     = "localhost"
-		PORT     = 5432
-		USER     = "postgres"
-		PASSWORD = "1303"
-		DBNAME   = "reza"
-	)
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
-		"password=%s dbname=%s sslmode=disable",
-		HOST, PORT, USER, PASSWORD, DBNAME)
-	db, err := sql.Open("postgres", psqlInfo)
+	db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
 	if err != nil {
-		panic(err)
-	}
-	err = db.Ping()
-	if err != nil {
-		panic(err)
+		log.Fatalf("Error opening database: %q", err)
 	}
 	return db
 }
