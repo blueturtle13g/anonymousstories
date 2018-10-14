@@ -10,12 +10,12 @@
 {{ end }}
 <br>
 
-<div class="center jumbotron container">
-    <h2>Anonymous Stories Tops</h2>
-</div>
-
-<br>
-<div class="container">
+<div class="jumbotron">
+    <h3 class="center mBut">Anonymous Story Tops</h3>
+    <hr>
+    <br>
+<div class="row ninety">
+<div class="col-4">
     <div class="card bg-light mb-3" style="max-width: 100rem;">
         <div class="card-header myCard-header">Top 250 Stories</div>
         <div class="card-body myCard-body">
@@ -30,7 +30,7 @@
     </div>
 </div>
 
-<div class="container">
+<div class="col-4">
     <div class="card bg-light mb-3" style="max-width: 100rem;">
         <div class="card-header myCard-header">Top 250 Writers</div>
         <div class="card-body myCard-body">
@@ -46,7 +46,7 @@
 </div>
 
 
-<div class="container">
+<div class="col-4">
     <div class="card bg-light mb-3" style="max-width: 100rem;">
         <div class="card-header myCard-header">Top 50 Categories</div>
         <div class="card-body myCard-body">
@@ -60,5 +60,6 @@
         </div>
     </div>
 </div>
-
+</div>
+</div>
 {{ template "footer.gohtml" .}}

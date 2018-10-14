@@ -29,7 +29,7 @@
             <button class="file-upload-btn center picButtons" type="button" onclick="$('.file-upload-input').trigger( 'click' )">Change Image</button>
             <button id="dImgPSure" class="picButtons">Delete Image</button>
         {{ else }}
-            <button class="file-upload-btn center" type="button" onclick="$('.file-upload-input').trigger( 'click' )">Choose Image</button>
+            <button class="file-upload-btn center picButtons" type="button" onclick="$('.file-upload-input').trigger( 'click' )">Choose Image</button>
         {{end}}
         </div>
 
@@ -119,7 +119,7 @@
                         <label for="cPass" class="control-label">Current Password</label>
                         <div class="input-group">
                             <span class="input-group-addon"><i class="fa fa-lock fa-lg" aria-hidden="true"></i></span>
-                            <input type="password" maxlength="50" class="passes form-control" name="cPass" id="cPass" required/>
+                            <input type="password" maxlength="50" class="passes form-control" name="cPass" id="cPass"/>
                         </div>
                     </div>
                 </div>
@@ -129,7 +129,7 @@
                         <label for="password" class="control-label">New Password</label>
                         <div class="input-group">
                             <span id="passIcon" class="input-group-addon"><i class="fa fa-lock fa-lg" aria-hidden="true"></i></span>
-                            <input type="password" maxlength="50" class="passes form-control" name="newPass" id="password" required/>
+                            <input type="password" maxlength="50" class="passes form-control" name="newPass" id="password"/>
                         </div>
                     </div>
                     <div class="col-12 warns stickTop">
@@ -146,7 +146,7 @@
                         <label for="confirm" class="control-label">Confirm Password</label>
                         <div class="input-group">
                             <span id="confIcon" class="input-group-addon"><i class="fa fa-lock fa-lg" aria-hidden="true"></i></span>
-                            <input type="password" maxlength="50" class="passes form-control" name="confirmPass" id="confirm" required/>
+                            <input type="password" maxlength="50" class="passes form-control" name="confirmPass" id="confirm"/>
                         </div>
                     </div>
                     <div class="col-12 warns stickTop">

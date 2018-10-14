@@ -11,15 +11,11 @@
       {{ if ne .Writer.Email "0"}}
       <strong>Email: </strong>{{ if .Writer.Permission }} {{ .Writer.Email }} {{else}}{{ .Writer.Name -}}'s email is private.{{end}} <br>
       {{end}}
-      <strong>{{ .Writer.Name }}'s Categories: </strong>{{if not .Cats }} No Categories. {{else}} {{ range .Cats }}<a href="/cat/{{.Id}}">{{ .Name }}</a> | {{end}}{{end}} <br>
-      <strong>Stories: </strong>{{if not .Stories }} No Stories. {{else}} {{ range .Stories }}<a href="/story/{{.Id}}">{{ .Title }}</a> | {{end}} {{end}} <br>
       <strong>Rate: </strong>{{ if eq .Writer.Rate 0.0}}Not Rated Yet.{{else}} {{ .Writer.Rate }}<small>/5 Out Of {{ .Writer.RateCount}} Votes.</small>{{end}} <br>
       <strong>Joined On: </strong>{{ .Writer.CreatedOn }} <br>
     {{else}}
             <h3 class="center">This Writer Is No Longer In Anonymous Stories.</h3>
             <h4 class="center">And Is Assigned To Number {{.Writer.Name}}. </h4><br>
-        <strong>Categories: </strong>{{if not .Cats }} No Categories. {{else}} {{ range .Cats }}<a href="/cat/{{.Id}}">{{ .Name }}</a> | {{end}}{{end}} <br>
-        <strong>Stories: </strong>{{if not .Stories }} No Stories. {{else}} {{ range .Stories }}<a href="/story/{{.Id}}">{{ .Title }}</a> | {{end}} {{end}} <br>
         <strong>Rate: </strong>{{ if eq .Writer.Rate 0.0}}Not Rated Yet.{{else}} {{ .Writer.Rate }}<small>/5 Out Of {{ .Writer.RateCount}} Votes.</small>{{end}} <br>
         <strong>Joined On: </strong>{{ .Writer.CreatedOn }} <br>
         <strong>Deleted Account On: </strong>{{ .Writer.DeletedOn }} <br>
@@ -27,47 +23,48 @@
 </div>
 <br>
 
-<div class="container">
+<div class="row ninety">
+<div class="col-4">
     <div class="card bg-light mb-3" style="max-width: 100rem;">
         <div class="card-header myCard-header">Top Ten Stories</div>
         <div class="card-body myCard-body">
             <div class="card-text">
                 <ol>
                 {{ range .TopTenStories }}
-                    <li><a href="/story/{{.Id}}">{{.Title}}</a> with {{ .Rate }}<small>/5 Out Of {{ .RateCount }} Votes.</small> Created On {{.CreatedOn}}</li>
+                    <li><a href="/story/{{.Id}}">{{.Title}}</a> with {{ .Rate }}<small>/5 Out Of {{ .RateCount }} Votes. </small>{{.CreatedOn}}</li>
                 {{end}} <!-- range TopStories -->
                 </ol>
             </div>
         </div>
     </div>
 </div>
-
-<div class="container">
+<div class="col-4">
     <div class="card bg-light mb-3" style="max-width: 100rem;">
         <div class="card-header myCard-header">All Stories</div>
         <div class="card-body myCard-body">
             <div class="card-text">
                 <ol>
                 {{ range .Stories }}
-                    <li><a href="/story/{{.Id}}">{{.Title}}</a> with {{ .Rate }}<small>/5 Out Of {{ .RateCount }} Vote.</small> Created On {{.CreatedOn}}</li>
+                    <li><a href="/story/{{.Id}}">{{.Title}}</a> with {{ .Rate }}<small>/5 Out Of {{ .RateCount }} Vote. </small>{{.CreatedOn}}</li>
                 {{end}} <!-- range RecentStories -->
                 </ol>
             </div>
         </div>
     </div>
 </div>
-<div class="container">
+<div class="col-4">
     <div class="card bg-light mb-3" style="max-width: 100rem;">
         <div class="card-header myCard-header">Categories</div>
         <div class="card-body myCard-body">
             <div class="card-text">
                 <ol>
                 {{ range .Cats }}
-                    <li><a href="/cat/{{.Id}}">{{.Name}}</a> with {{ .Rate }}<small>/5 Out Of {{ .RateCount }} Vote.</small> Created On {{.CreatedOn}}</li>
+                    <li><a href="/cat/{{.Id}}">{{.Name}}</a> with {{ .Rate }}<small>/5 Out Of {{ .RateCount }} Vote. </small>{{.CreatedOn}}</li>
                 {{end}} <!-- range RecentStories -->
                 </ol>
             </div>
         </div>
     </div>
+</div>
 </div>
 {{ template "footer.gohtml" .}}

@@ -76,6 +76,28 @@ func sortStoriesByRate(stories []Story) (sortedStories []Story) {
 	}
 	return sortedStories
 }
+//
+//func dbConn() *sql.DB {
+//	const (
+//		HOST     = "localhost"
+//		PORT     = 5432
+//		USER     = "postgres"
+//		PASSWORD = "1303"
+//		DBNAME   = "reza"
+//	)
+//	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
+//		"password=%s dbname=%s sslmode=disable",
+//		HOST, PORT, USER, PASSWORD, DBNAME)
+//	db, err := sql.Open("postgres", psqlInfo)
+//	if err != nil {
+//		panic(err)
+//	}
+//	err = db.Ping()
+//	if err != nil {
+//		panic(err)
+//	}
+//	return db
+//}
 
 func dbConn() *sql.DB {
 	db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))

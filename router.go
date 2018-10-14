@@ -23,6 +23,7 @@ func init() {
 	sessionManager.Persist(false)          // Persist the session after a user has closed their browser.
 }
 
+
 func port() string {
 	port := os.Getenv("PORT")
 	port = ":" + port
