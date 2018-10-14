@@ -6,7 +6,7 @@
 }
 
 .mBut{
-  margin-top: -65px!important;
+  margin-top: -70px!important;
 }
 
 .control-label{
@@ -261,14 +261,14 @@
 }
 
 .backBlack{
-  background-color: rgba(0, 0, 0, 0.86);
+  background-color: black;
   border-radius: 3px;
   color: white;
   padding: .4rem 1rem .5rem 1rem;
 }
 
 .backBlack:hover{
-  background-color: black;
+  background-color: rgba(0, 0, 0, 0.77);
   text-decoration: none;
   color: white;
 }
@@ -520,15 +520,12 @@ button > a:hover{
 }
 
 .center{
+  margin-top: 10px!important;
   text-align: center;
   max-width: 600px;
   margin: 0 auto;
 }
 
-.ninety{
-  width: 95%;
-  margin: 0 auto;
-}
 body {
   font-family: 'Roboto Condensed', sans-serif;
   margin: 0;
@@ -643,9 +640,9 @@ input::-webkit-input-placeholder {
     -moz-border-radius: 2px;
     -webkit-border-radius: 2px;
     border-radius: 2px;
-    -moz-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
-    -webkit-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
-    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+    -moz-box-shadow: 0 2px 2px rgba(0, 0, 0, 0.3);
+    -webkit-box-shadow: 0 2px 2px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.3);
 
 }
 

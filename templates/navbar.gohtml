@@ -9,7 +9,6 @@
   <a {{ if eq .Title "Contact Us"}} class="active" {{ end }} href="/contact">Contact Us</a>
   {{ if .WriterName }}
   <a href="/out" id="outSure">Log Out</a>
-  <button  id="LogOut" style="display: none;"><a href="/out"></a></button>
   {{ else }}
   <a {{ if eq .Title "Sign Page" }} class="active" {{ end }} href="/in">Log In</a>
   {{ end }}
