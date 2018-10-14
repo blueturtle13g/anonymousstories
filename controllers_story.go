@@ -18,13 +18,16 @@ func SingleStory(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	} else if WriterId > 0 {
 		cWriter = getWriterById(WriterId)
 	}
+
 	parameter := ps.ByName("id")
 	storyId, _ := strconv.Atoi(parameter)
-	if affect := incrementViewCount(storyId); affect < 1 {
-		fmt.Println("view count didn't increment.")
+	wholeStory, ItsComments, ItsTags := getStoryById(storyId)
+	if wholeStory.By != cWriter.Name{
+		if affect := incrementViewCount(storyId); affect < 1 {
+			fmt.Println("view count didn't increment.")
+		}
 	}
 	gotFlash := make(map[string]interface{})
-	wholeStory, ItsComments, ItsTags := getStoryById(storyId)
 	if err := session.PopObject(w, "sentFlash", &gotFlash); err != nil {
 		fmt.Println(err)
 	}
